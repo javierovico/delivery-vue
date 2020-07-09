@@ -63,7 +63,7 @@ Vue.use(VueFab, /* {
 } */)
 Vue.component("loading", Loading);
 Vue.component("center-container", CenterContainer);
-axios.defaults.baseURL = 'http://172.30.1.243:8082/api';
+axios.defaults.baseURL = 'http://172.30.2.234:82/api';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 const token = localStorage.getItem('user-token')
 if (token) {
