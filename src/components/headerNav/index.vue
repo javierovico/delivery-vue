@@ -1,37 +1,25 @@
-/** * Created by vouill on 11/13/17. */
-
 <template>
   <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
+    <div>
+      <b-navbar toggleable="lg" type="dark" variant="info">
+        <b-navbar-brand href="#" @click.passive="$router.push('/')">Delivery Admin</b-navbar-brand>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
             <router-link class="nav-link" to="/">Inicio <span class="sr-only">(current)</span></router-link>
-          </li>
-<!--          <li class="nav-item">-->
-<!--            <router-link v-if="isAuthenticated" to="/account" class="nav-link">Perfil<span class="sr-only">(current)</span></router-link>-->
-<!--          </li>-->
-          <li class="nav-item">
             <router-link v-if="isAuthenticated" to="/delivery/caja-lista" class="nav-link">Caja Lista<span class="sr-only">(current)</span></router-link>
-          </li>
-<!--          <li class="nav-item">-->
-<!--            <router-link to="/usuario/agregar" class="nav-link">Agregar Perfil<span class="sr-only">(current)</span></router-link>-->
-<!--          </li>-->
-          <li class="nav-item">
-            <a href="#!" v-if="isAuthenticated" @click.prevent="cerrarSesion" class="nav-link">Cerrar Sesion<span class="sr-only">(current)</span></a>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-      </div>
-    </nav>
+          </b-navbar-nav>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item-dropdown v-if="isAuthenticated" right>
+              <template v-slot:button-content>
+                <em>Usuario</em>
+              </template>
+              <b-dropdown-item href="#" @click.prevent="cerrarSesion">Cerrar Sesion</b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
+    </div>
   </header>
 </template>
 
