@@ -127,95 +127,49 @@
         </div>
 <!--        Modal Zone-->
 <!--        Modal Agregar Motivos-->
-        <div class="modal" tabindex="-1" role="dialog" id="modalMotivo">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{(modalMotivo.edit!=null)?('Editando Motivo '+motivos[modalMotivo.edit].motivo):('Agregar Nuevo Motivo')}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <b-modal id="modalMotivo" @ok="saveMotivo" ok-title="Guardar Cambios" :title="(modalMotivo.edit!=null)?('Editando Motivo '+motivos[modalMotivo.edit].motivo):('Agregar Nuevo Motivo')">
+            <form class="form-inline">
+                <label class="sr-only" for="inlineFormInputGroupUsername2">Motivo</label>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Motivo:</div>
                     </div>
-                    <div class="modal-body">
-                        <form class="form-inline">
-                            <label class="sr-only" for="inlineFormInputGroupUsername2">Motivo</label>
-                            <div class="input-group mb-2 mr-sm-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">Motivo:</div>
-                                </div>
-                                <input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Motivo..." v-model="modalMotivo.motivoSelected.motivo">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-on:click.prevent="saveMotivo" type="button" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
+                    <input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Motivo..." v-model="modalMotivo.motivoSelected.motivo">
                 </div>
-            </div>
-        </div>
+            </form>
+        </b-modal>
         <!--        Modal Agregar SubMotivos-->
-        <div class="modal" tabindex="-1" role="dialog" id="modalSubMotivo">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{(modalSubMotivo.edit!=null)?('Editando SubMotivo '+subMotivos[modalSubMotivo.edit].submotivo):('Agregar Nuevo SubMotivo')}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+
+        <b-modal id="modalSubMotivo" @ok="saveSubMotivo" ok-title="Guardar Cambios" :title="(modalSubMotivo.edit!=null)?('Editando SubMotivo '+subMotivos[modalSubMotivo.edit].submotivo):('Agregar Nuevo SubMotivo')">
+            <form class="form-inline">
+                <label class="sr-only" for="inlineFormInputGroupUsername3">SubMotivo</label>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">SubMotivo:</div>
                     </div>
-                    <div class="modal-body">
-                        <form class="form-inline">
-                            <label class="sr-only" for="inlineFormInputGroupUsername3">SubMotivo</label>
-                            <div class="input-group mb-2 mr-sm-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">SubMotivo:</div>
-                                </div>
-                                <input type="text" class="form-control" id="inlineFormInputGroupUsername3" placeholder="SubMotivo..." v-model="modalSubMotivo.subMotivoSelected.submotivo">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-on:click.prevent="saveSubMotivo" type="button" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
+                    <input type="text" class="form-control" id="inlineFormInputGroupUsername3" placeholder="SubMotivo..." v-model="modalSubMotivo.subMotivoSelected.submotivo">
                 </div>
-            </div>
-        </div>
+            </form>
+        </b-modal>
         <!--        Modal Agregar SubMotivos-->
-        <div class="modal" tabindex="-1" role="dialog" id="modalSubMotivo2">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">{{(modalSubMotivo2.edit!=null)?('Editando SubMotivo2 '+subMotivos2[modalSubMotivo2.edit].submotivo):('Agregar Nuevo SubMotivo2')}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+
+        <b-modal id="modalSubMotivo2" @ok="saveSubMotivo2" ok-title="Guardar Cambios" :title="(modalSubMotivo2.edit!=null)?('Editando SubMotivo2 '+subMotivos2[modalSubMotivo2.edit].submotivo):('Agregar Nuevo SubMotivo2')">
+            <form class="form-inline">
+                <label class="sr-only" for="inlineFormInputGroupUsername4">SubMotivo</label>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">SubMotivo:</div>
                     </div>
-                    <div class="modal-body">
-                        <form class="form-inline">
-                            <label class="sr-only" for="inlineFormInputGroupUsername4">SubMotivo</label>
-                            <div class="input-group mb-2 mr-sm-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">SubMotivo:</div>
-                                </div>
-                                <input type="text" class="form-control" id="inlineFormInputGroupUsername4" placeholder="SubMotivo..." v-model="modalSubMotivo2.subMotivo2Selected.submotivo">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button v-on:click.prevent="saveSubMotivo2" type="button" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
+                    <input type="text" class="form-control" id="inlineFormInputGroupUsername4" placeholder="SubMotivo..." v-model="modalSubMotivo2.subMotivo2Selected.submotivo">
                 </div>
-            </div>
-        </div>
+            </form>
+        </b-modal>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    import $ from 'jquery'
+    // import $ from 'jquery'
     export default {
         props:[
             'paginaActualQuery',
@@ -309,6 +263,7 @@
                     return;
                 }
                 axios.get('/delivery/submotivo',{params:{
+                        cliente_id:this.deliveries[this.deliverySelected].idDelivery,
                         perPage:100,
                         motivo_id: this.motivos[this.motivoSelected].id,
                 }}).then((response)=>{
@@ -329,6 +284,7 @@
                 axios.get('/delivery/submotivo2',{params:{
                         perPage:100,
                         id_submotivo: this.subMotivos[this.subMotivoSelected].id,
+                        cliente_id: this.deliveries[this.deliverySelected].idDelivery
                 }}).then((response)=>{
                     this.subMotivos2 = response.data.data;
                 }).catch((error)=>{
@@ -388,8 +344,11 @@
                 let confirmation = prompt("introduci \"BORRAR\" para confirmar");
                 const motivoSel = this.motivos[motivoIndex];
                 if(confirmation === "BORRAR"){
-                    // eslint-disable-next-line no-unused-vars
-                    axios.delete('/delivery/motivo/'+motivoSel.id).then((response)=>{
+                    axios.delete('/delivery/motivo/'+motivoSel.id,{
+                        data:{
+                            cliente_id: this.deliveries[this.deliverySelected].idDelivery
+                        }
+                    }).then(()=>{
                         this.motivos.splice(motivoIndex,1);
                         this.motivoSelected = '';
                         this.subMotivos = null
@@ -411,7 +370,7 @@
                 this.modalMotivo.motivoSelected.id_cliente_delivery =  this.deliveries[this.deliverySelected].idDelivery;
                 this.modalMotivo.motivoSelected.id_sucursal =  0;
                 this.modalMotivo.motivoSelected.motivo =  '';
-                $('#modalMotivo').modal('show');
+                this.$bvModal.show('modalMotivo')
             },
             editMotivo(motivoIndex){
                 const motivo = this.motivos[motivoIndex];
@@ -421,13 +380,14 @@
                 this.modalMotivo.motivoSelected.id_cliente_delivery =  motivo.id_cliente_delivery;
                 this.modalMotivo.motivoSelected.id_sucursal =  motivo.id_sucursal;
                 this.modalMotivo.motivoSelected.motivo =  motivo.motivo;
-                $('#modalMotivo').modal('show');
+                this.$bvModal.show('modalMotivo')
             },
             saveMotivo(){
+                this.modalMotivo.edit = null;
                 const idMotivo = this.modalMotivo.motivoSelected.id;
                 const parameter = {
                     motivo: this.modalMotivo.motivoSelected.motivo,
-                    id_cliente_delivery: this.modalMotivo.motivoSelected.id_cliente_delivery,
+                    cliente_id: this.modalMotivo.motivoSelected.id_cliente_delivery,
                     id_sucursal: this.modalMotivo.motivoSelected.id_sucursal,
                     estado: this.modalMotivo.motivoSelected.estado,
                 }
@@ -443,7 +403,7 @@
                     }else{
                         this.motivos.push(response.data.motivo);
                     }
-                    $('#modalMotivo').modal('hide');
+                    this.$bvModal.hide('modalMotivo');
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
@@ -456,7 +416,11 @@
                 const motivoSel = this.subMotivos[subMotivoIndex];
                 if(confirmation === "BORRAR"){
                     // eslint-disable-next-line no-unused-vars
-                    axios.delete('/delivery/submotivo/'+motivoSel.id).then((response)=>{
+                    axios.delete('/delivery/submotivo/'+motivoSel.id,{
+                        data:{
+                            cliente_id: this.deliveries[this.deliverySelected].idDelivery
+                        }
+                    }).then(()=>{
                         this.subMotivos.splice(subMotivoIndex,1);
                         this.subMotivoSelected = '';
                         this.subMotivos2 = null
@@ -477,7 +441,7 @@
                 this.modalSubMotivo.subMotivoSelected.submotivo = ''
                 this.modalSubMotivo.subMotivoSelected.accion = ''
                 this.modalSubMotivo.subMotivoSelected.estado = 2
-                $('#modalSubMotivo').modal('show')
+                this.$bvModal.show('modalSubMotivo')
             },
             editSubMotivo(subMotivoIndex){
                 const subMotivoSel = this.subMotivos[subMotivoIndex];
@@ -487,12 +451,14 @@
                 this.modalSubMotivo.subMotivoSelected.submotivo = subMotivoSel.submotivo
                 this.modalSubMotivo.subMotivoSelected.accion = subMotivoSel.accion
                 this.modalSubMotivo.subMotivoSelected.estado = subMotivoSel.estado
-                $('#modalSubMotivo').modal('show')
+                this.$bvModal.show('modalSubMotivo')
             },
             saveSubMotivo(){
+                this.modalSubMotivo.edit = null;
                 const idSubMotivo = this.modalSubMotivo.subMotivoSelected.id;
                 const parameter = {
                     id_motivo : this.modalSubMotivo.subMotivoSelected.id_motivo,
+                    cliente_id: this.deliveries[this.deliverySelected].idDelivery,
                     submotivo: this.modalSubMotivo.subMotivoSelected.submotivo,
                     accion: this.modalSubMotivo.subMotivoSelected.accion,
                     estado: this.modalSubMotivo.subMotivoSelected.estado
@@ -509,7 +475,7 @@
                     }else{
                         this.subMotivos.push(response.data.subMotivo);
                     }
-                    $('#modalSubMotivo').modal('hide');
+                    this.$bvModal.hide('modalSubMotivo');
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
@@ -521,8 +487,11 @@
                 let confirmation = prompt("introduci \"BORRAR\" para confirmar");
                 const motivoSel = this.subMotivos2[subMotivoIndex];
                 if(confirmation === "BORRAR"){
-                    // eslint-disable-next-line no-unused-vars
-                    axios.delete('/delivery/submotivo2/'+motivoSel.id).then((response)=>{
+                    axios.delete('/delivery/submotivo2/'+motivoSel.id,{
+                        data:{
+                            cliente_id: this.deliveries[this.deliverySelected].idDelivery
+                        }
+                    }).then(()=>{
                         this.subMotivos2.splice(subMotivoIndex,1);
                         this.subMotivo2Selected = '';
                     }).catch((error)=>{
@@ -541,26 +510,27 @@
                 this.modalSubMotivo2.subMotivo2Selected.submotivo = ''
                 this.modalSubMotivo2.subMotivo2Selected.accion = ''
                 this.modalSubMotivo2.subMotivo2Selected.estado = 2
-                $('#modalSubMotivo2').modal('show')
+                this.$bvModal.show('modalSubMotivo2')
             },
             editSubMotivo2(subMotivo2Index){
                 const subMotivo2Sel = this.subMotivos2[subMotivo2Index];
-                console.log(subMotivo2Sel);
                 this.modalSubMotivo2.edit = subMotivo2Index
                 this.modalSubMotivo2.subMotivo2Selected.id = subMotivo2Sel.id
                 this.modalSubMotivo2.subMotivo2Selected.id_submotivo = subMotivo2Sel.id_submotivo
                 this.modalSubMotivo2.subMotivo2Selected.submotivo = subMotivo2Sel.submotivo
                 this.modalSubMotivo2.subMotivo2Selected.accion = subMotivo2Sel.accion
                 this.modalSubMotivo2.subMotivo2Selected.estado = subMotivo2Sel.estado
-                $('#modalSubMotivo2').modal('show')
+                this.$bvModal.show('modalSubMotivo2')
             },
             saveSubMotivo2(){
+                this.modalSubMotivo2.edit = null;
                 const idSubMotivo2 = this.modalSubMotivo2.subMotivo2Selected.id;
                 const parameter = {
                     id_submotivo : this.modalSubMotivo2.subMotivo2Selected.id_submotivo,
                     submotivo: this.modalSubMotivo2.subMotivo2Selected.submotivo,
                     accion: this.modalSubMotivo2.subMotivo2Selected.accion,
-                    estado: this.modalSubMotivo2.subMotivo2Selected.estado
+                    estado: this.modalSubMotivo2.subMotivo2Selected.estado,
+                    cliente_id: this.deliveries[this.deliverySelected].idDelivery
                 }
                 let axiosVar = null;
                 if(idSubMotivo2){
@@ -574,7 +544,7 @@
                     }else{
                         this.subMotivos2.push(response.data.subMotivo2);
                     }
-                    $('#modalSubMotivo2').modal('hide');
+                    this.$bvModal.hide('modalSubMotivo2');
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
