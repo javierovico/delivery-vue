@@ -182,6 +182,10 @@
                 paginaTotal: 1,
                 paginaCantidadItem: 4,
                 log: null,
+                queryDeliverySelectedId:null,
+                queryMotivoSelectedId:null,
+                querySubMotivoSelectedId:null,
+                querySubMotivo2SelectedId:null,
                 deliveries: null,
                 deliverySelected: '',
                 motivos: null,
@@ -228,10 +232,10 @@
         },
         watch:{
             // eslint-disable-next-line no-unused-vars
-            $route (to, from){
-                this.setParams();
-                this.mostrarBasese();
-            },
+            // $route (to, from){
+            //     this.setParams();
+            //     this.mostrarBasese();
+            // },
             deliverySelected(){
                 this.motivos = null
                 this.motivoSelected = '';
@@ -242,11 +246,30 @@
                 if(this.deliverySelected === ''){
                     return;
                 }
-                axios.get('/delivery/motivo?XDEBUG_SESSION_START=PHPSTORM',{params:{
+                let query = this.getQuery({
+                    deliverySelected : this.deliveries[this.deliverySelected].idDelivery,
+                    motivoSelected : null,
+                    subMotivoSelected : null,
+                    subMotivo2Selected : null,
+                });
+                this.$router.replace({
+                    query: query
+                    // eslint-disable-next-line no-unused-vars
+                }).catch(err => {
+                    console.log('err')
+                })
+                axios.get('/delivery/motivo',{params:{
                         perPage:100,
                         cliente_id: this.deliveries[this.deliverySelected].idDelivery,
                 }}).then((response)=>{
                     this.motivos = response.data.data;
+                    if(this.queryMotivoSelectedId){
+                        this.motivos.forEach((e,index)=> {
+                            if (e.id === this.queryMotivoSelectedId){
+                                this.motivoSelected = index;
+                            }
+                        })
+                    }
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
@@ -262,12 +285,26 @@
                 if(this.motivoSelected === ''){
                     return;
                 }
+                let query = this.getQuery({
+                    motivoSelected : this.motivos[this.motivoSelected].id
+                });
+                this.$router.replace({
+                    query: query
+                    // eslint-disable-next-line no-unused-vars
+                }).catch(err=>{console.log('err2')})
                 axios.get('/delivery/submotivo',{params:{
                         cliente_id:this.deliveries[this.deliverySelected].idDelivery,
                         perPage:100,
                         motivo_id: this.motivos[this.motivoSelected].id,
                 }}).then((response)=>{
                     this.subMotivos = response.data.data;
+                    if(this.querySubMotivoSelectedId){
+                        this.subMotivos.forEach((e,index)=>{
+                            if(e.id === this.querySubMotivoSelectedId){
+                                this.subMotivoSelected = index;
+                            }
+                        })
+                    }
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
@@ -281,12 +318,27 @@
                 if(this.subMotivoSelected === ''){
                     return;
                 }
+                let query = this.getQuery({
+                    subMotivoSelected : this.subMotivos[this.subMotivoSelected].id,
+                    subMotivo2Selected : null
+                });
+                this.$router.replace({
+                    query: query
+                    // eslint-disable-next-line no-unused-vars
+                }).catch(err=>{console.log('err2')})
                 axios.get('/delivery/submotivo2',{params:{
                         perPage:100,
                         id_submotivo: this.subMotivos[this.subMotivoSelected].id,
                         cliente_id: this.deliveries[this.deliverySelected].idDelivery
                 }}).then((response)=>{
                     this.subMotivos2 = response.data.data;
+                    if(this.querySubMotivo2SelectedId){
+                        this.subMotivos2.forEach((e,index)=>{
+                            if(e.id === this.querySubMotivo2SelectedId){
+                                this.subMotivo2Selected = index
+                            }
+                        })
+                    }
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
@@ -294,17 +346,49 @@
                     this.cargando = false;
                 });
             },
+            subMotivo2Selected(){
+                if(this.subMotivo2Selected === ''){
+                    return;
+                }
+                let query = this.getQuery({
+                    subMotivo2Selected : this.subMotivos2[this.subMotivo2Selected].id
+                });
+                this.$router.replace({
+                    query: query
+                    // eslint-disable-next-line no-unused-vars
+                }).catch(err=>{console.log('err2')})
+            }
         },
         methods:{
+            getQuery(init){
+                let query = init
+                if((typeof init.deliverySelected === 'undefined') && this.$route.query.deliverySelected){
+                    query.deliverySelected = this.$route.query.deliverySelected
+                }else if(init.deliverySelected == null){
+                    delete (query.deliverySelected)
+                }
+                if((typeof init.motivoSelected === 'undefined') && this.$route.query.motivoSelected){
+                    query.motivoSelected = this.$route.query.motivoSelected
+                }else if(init.motivoSelected == null){
+                    delete (query.motivoSelected)
+                }
+                if((typeof init.subMotivoSelected === 'undefined') && this.$route.query.subMotivoSelected){
+                    query.subMotivoSelected = this.$route.query.subMotivoSelected
+                }else if(init.subMotivoSelected == null){
+                    delete (query.subMotivoSelected)
+                }
+                if((typeof init.subMotivo2Selected === 'undefined') && this.$route.query.subMotivo2Selected){
+                    query.subMotivo2Selected = this.$route.query.subMotivo2Selected
+                }else if(init.subMotivo2Selected == null){
+                    delete (query.subMotivo2Selected)
+                }
+                return query;
+            },
             setParams(){
-                const page = parseInt(this.$route.query.page?this.$route.query.page:1);
-                const idClient = this.$route.query.idClient?parseInt(this.$route.query.idClient):null;
-                const archivo = this.$route.query.archivo?this.$route.query.archivo:null;
-                const idCampana = this.$route.query.idCampana?parseInt(this.$route.query.idCampana):null;
-                this.archivo = archivo;
-                this.paginaActual = page;
-                this.idClient = idClient;
-                this.idCampana = idCampana;
+                this.queryDeliverySelectedId = this.$route.query.deliverySelected?parseInt(this.$route.query.deliverySelected):null;
+                this.queryMotivoSelectedId = this.$route.query.motivoSelected?parseInt(this.$route.query.motivoSelected):null;
+                this.querySubMotivoSelectedId = this.$route.query.subMotivoSelected?parseInt(this.$route.query.subMotivoSelected):null;
+                this.querySubMotivo2SelectedId = this.$route.query.subMotivo2Selected?parseInt(this.$route.query.subMotivo2Selected):null;
             },
             mostrarBasese(){
                 this.cargando = true;
@@ -312,6 +396,13 @@
                     perPage:100,
                 }}).then((response)=>{
                     this.deliveries = response.data.data;
+                    if(this.queryDeliverySelectedId){
+                        this.deliveries.forEach((e,index) => {
+                            if(e.idDelivery === this.queryDeliverySelectedId){
+                                this.deliverySelected = index;
+                            }
+                        })
+                    }
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
