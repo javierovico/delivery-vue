@@ -8,6 +8,7 @@ import EditarUsuario from '@/components/editarUsuario';
 import EliminarUsuario from '@/components/eliminarUsuario';
 import AgregarUsuario from '@/components/agregarUsuario';
 import CajaLista from "@/components/delivery/CajaLista";
+import Categoria from "@/components/delivery/Categoria";
 
 Vue.use(Router);
 
@@ -29,6 +30,7 @@ const ifAuthenticated = (to, from, next) => {
 
 export default new Router({
   mode: "history",
+  // duplicateNavigationPolicy: 'reload',
   routes: [
     {
       path: "/",
@@ -39,6 +41,12 @@ export default new Router({
       path: "/delivery/caja-lista",
       name: "CajaLista",
       component: CajaLista,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: "/categoria",
+      name: "Categoria",
+      component: Categoria,
       beforeEnter: ifAuthenticated
     },
     {

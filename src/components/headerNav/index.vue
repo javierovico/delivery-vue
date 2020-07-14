@@ -8,6 +8,7 @@
           <b-navbar-nav>
             <router-link class="nav-link" to="/">Inicio <span class="sr-only">(current)</span></router-link>
             <router-link v-if="isAuthenticated" to="/delivery/caja-lista" class="nav-link">Caja Lista<span class="sr-only">(current)</span></router-link>
+            <router-link v-if="isAuthenticated" to="/categoria" class="nav-link">Categoria</router-link>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown v-if="isAuthenticated" right>
