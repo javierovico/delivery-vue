@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <b-container :fluid="true">
             <b-row>
-                <h3 class="col-md-12 text-center"><router-link :to="{path:'/categoria/', query:{}}">Administrador</router-link></h3>
+                <h3 class="col-md-12 text-center"><router-link :to="{path:'/categoria/', query:{}}">Zona cobertura</router-link></h3>
                 <div v-if="cargando" class="col-md-12">
                     <div class="spinner-border" role="status">
                         <span class="sr-only">Loading...</span>

@@ -9,6 +9,7 @@ import EliminarUsuario from '@/components/eliminarUsuario';
 import AgregarUsuario from '@/components/agregarUsuario';
 import CajaLista from "@/components/delivery/CajaLista";
 import Categoria from "@/components/delivery/Categoria";
+import Cobertura from "@/components/delivery/Cobertura";
 
 Vue.use(Router);
 
@@ -47,6 +48,12 @@ export default new Router({
       path: "/categoria",
       name: "Categoria",
       component: Categoria,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: "/zona-cobertura",
+      name: "Cobertura",
+      component: Cobertura,
       beforeEnter: ifAuthenticated
     },
     {
