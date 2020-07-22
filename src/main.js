@@ -9,6 +9,7 @@ import Loading from "./components/lib/loading";
 import CenterContainer from "./components/lib/center-container";
 import router from "./router";
 import VueFab from 'vue-float-action-button'
+import * as VueGoogleMaps from "vue2-google-maps";
 window.$ = window.jQuery = require('jquery')
 import $ from 'jquery'
 import 'bootstrap-notify';
@@ -63,8 +64,15 @@ Vue.use(VueFab, /* {
 } */)
 Vue.component("loading", Loading);
 Vue.component("center-container", CenterContainer);
-// axios.defaults.baseURL = 'http://172.30.2.234:82/api';
-axios.defaults.baseURL = 'http://172.30.1.243:8082/api';
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: "AIzaSyClbud6185Id2nosGO3ko4c9xRoE9t8snk",
+    libraries: "places,geometry", // necessary for places input
+  }
+});
+axios.defaults.baseURL = 'http://172.30.2.234:82/api';
+// axios.defaults.baseURL = 'http://172.30.1.243:8082/api';
+// axios.defaults.baseURL = 'http://127.0.0.1:83/api';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 const token = localStorage.getItem('user-token')
 if (token) {
