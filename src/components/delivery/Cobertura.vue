@@ -57,11 +57,36 @@
                                 <google-map :mapa="mapaArray" @editPoint="editPoint" @addPointToEdit="addPointToEdit" @delPoint="delPoint"></google-map>
                             </b-col>
                             <b-col cols="6" v-if="deliverySelected !== ''">
-                                <h4>Delivery por distancias:</h4>
-                                <b-table striped hover :items="mapaArray.circles" :fields="['item',{key:'radius',sortable:true, label:'radio (m)'},{key:'price',label:'precio delivery'},{key:'name',label:'nombre'},{key:'mostrar'},{key:'mostrar'},'acciones']">
-                                    <!-- A virtual column -->
+                                <b-container fluid>
+                                    <b-row>
+                                        <b-col cols="7">
+                                            <h4>Delivery por distancias:</h4>
+                                        </b-col>
+                                        <b-col cols="5">
+                                            <div>
+                                                <b-dropdown variant="primary">
+                                                    <template v-slot:button-content>
+                                                        <b-icon icon="list" aria-hidden="true"></b-icon>
+                                                        Acciones
+                                                    </template>
+                                                    <b-dropdown-item-button id="agregar-zona-distancia" @click.prevent="(sucursalSelected !== '') && createZonaDistancia()">
+                                                        <b-icon icon="plus" aria-hidden="true"></b-icon>
+                                                        Agregar Nuevo
+                                                    </b-dropdown-item-button>
+                                                    <b-tooltip v-if="sucursalSelected === ''" target="agregar-zona-distancia" triggers="hover">
+                                                        Seleccione una sucursal primero
+                                                    </b-tooltip>
+                                                </b-dropdown>
+                                            </div>
+                                        </b-col>
+                                    </b-row>
+                                </b-container>
+                                <b-table striped hover :items="mapaArray.circles" :fields="['item','sucursal',{key:'radius',sortable:true, label:'radio (m)'},{key:'price',label:'precio delivery'},{key:'name',label:'nombre'},{key:'mostrar'},{key:'mostrar'},'acciones']">
                                     <template v-slot:cell(item)="data">
                                         {{ data.index + 1 }}
+                                    </template>
+                                    <template v-slot:cell(sucursal)="data">
+                                        {{ data.item.sucursal.sucursal }}
                                     </template>
                                     <template v-slot:cell(price)="data">
                                         <b>{{ numberWithCommas(data.item.delivery.precioDeliv)}}</b>
@@ -86,7 +111,11 @@
                                             <template v-if="!((mapaArray.edit.index === data.index) && (mapaArray.edit.tipo === 2))">
                                                 <b-dropdown-item-button @click="editMap(data.index,data.item,2)" >
                                                     <b-icon icon="pencil" aria-hidden="true"></b-icon>
-                                                    Editar
+                                                    Editar Radio
+                                                </b-dropdown-item-button>
+                                                <b-dropdown-item-button @click="editZonaDistancia(data.index,data.item)" >
+                                                    <b-icon icon="pencil" aria-hidden="true"></b-icon>
+                                                    Editar Precio
                                                 </b-dropdown-item-button>
                                             </template>
                                             <template v-else>
@@ -137,6 +166,10 @@
                                                     <b-icon icon="pencil" aria-hidden="true"></b-icon>
                                                     {{(data.item.puntos.length > 0)?('Editar'):('agregar')}}
                                                 </b-dropdown-item-button>
+                                                <b-dropdown-item-button @click="editarZonaDelivery(data.index,data.item)" >
+                                                    <b-icon icon="pencil" aria-hidden="true"></b-icon>
+                                                    Editar precio
+                                                </b-dropdown-item-button>
                                             </template>
                                             <template v-else>
                                                 <b-dropdown-item-button variant="primary" @click="mapaArray.edit.item.puntos.splice(0,mapaArray.edit.item.puntos.length)">
@@ -165,7 +198,77 @@
                 </b-col>
             </b-row>
         </b-container>
-<!--        Modal Zone-->
+        <!--        Modal Zone-->
+        <!--        Modal Agregar Motivos-->
+        <b-modal id="modalZonaDistancia" @ok="storeZonaDistancia" ok-title="Guardar Cambios" :title="((modalZonaDistancia.index>=0)?('Editar ZonaDistancia '):('Agregar Nueva Zona Distancia para ')) + modalZonaDistancia.item.sucursal.nombre">
+            <div>
+                <b-form>
+                    <b-form-group
+                            id="input-group-1"
+                            label="Nombre de Delivery Extra:"
+                            label-for="input-1"
+                    >
+                        <b-form-input
+                                id="input-1"
+                                v-model="modalZonaDistancia.item.productoDelivery.nombre"
+                                type="text"
+                                required
+                                placeholder="Introducir del delivery extra"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="input-group-2" label="Precio:" label-for="input-2">
+                        <b-form-input
+                                id="input-2"
+                                type="number"
+                                min="0"
+                                step="1"
+                                v-model="modalZonaDistancia.item.productoDelivery.precio"
+                                placeholder="Introducir el nuevo precio"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="input-group-3" label="Radio:" label-for="input-3">
+                        <b-form-input
+                                id="input-3"
+                                min="0"
+                                step="1"
+                                type="number"
+                                v-model="modalZonaDistancia.item.distancia"
+                                placeholder="Introducir la distancia maxima"
+                        ></b-form-input>
+                    </b-form-group>
+                </b-form>
+            </div>
+        </b-modal>
+        <!--        Modal Agregar Motivos-->
+        <b-modal id="modalZonaDelivery" @ok="storeZonaDelivery" ok-title="Guardar Cambios" :title="((modalZonaDelivery.index>=0)?('Editar ZonaDelivery '):('Agregar Nueva Zona Delivery para ')) + modalZonaDelivery.item.sucursal.nombre">
+            <div>
+                <b-form>
+                    <b-form-group
+                            id="input-group-21"
+                            label="Nombre de Delivery Extra:"
+                            label-for="input-1"
+                    >
+                        <b-form-input
+                                id="input-21"
+                                v-model="modalZonaDelivery.item.productoDelivery.nombre"
+                                type="text"
+                                required
+                                placeholder="Introducir del delivery extra"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group id="input-group-22" label="Precio:" label-for="input-2">
+                        <b-form-input
+                                id="input-22"
+                                type="number"
+                                min="0"
+                                step="1"
+                                v-model="modalZonaDelivery.item.productoDelivery.precio"
+                                placeholder="Introducir el nuevo precio"
+                        ></b-form-input>
+                    </b-form-group>
+                </b-form>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -186,7 +289,13 @@
                     .map(f => {
                         return { text: f.label, value: f.key }
                     })
-            }
+            },
+            sucursalSelectedObject(){
+                return (this.sucursalSelected >=0)? this.sucursales[this.sucursalSelected]:null
+            },
+            deliverySelectedObject(){
+                return (this.deliverySelected >=0)? this.deliveries[this.deliverySelected]:null
+            },
         },
         data() {
             return {
@@ -211,6 +320,36 @@
                         index: -1,
                         item: null,
                         tipo: 1,        //1: sucursales, 2: por radio
+                    }
+                },
+                modalZonaDistancia:{
+                    index: -1,
+                    item: {
+                        distancia: 0,
+                        zona_distancia_id: -1,
+                        sucursal:{
+                            nombre: '',
+                            sucursal_id: -1,
+                        },
+                        productoDelivery:{
+                            nombre: '',
+                            precio: 0,
+                            producto_id: -1,
+                        }
+                    }
+                },
+                modalZonaDelivery:{
+                    index: -1,
+                    item:{
+                        sucursal:{
+                            nombre: '',
+                            sucursal_id: -1,
+                        },
+                        productoDelivery:{
+                            nombre: '',
+                            precio: 0,
+                            producto_id: -1,
+                        }
                     }
                 }
             }
@@ -259,13 +398,18 @@
                 this.loadMaps()
             },
             sucursalSelected(){
+                let query = null
                 if(this.sucursalSelected === ''){
-                    return;
+                   query = this.getQuery({
+                        sucursalSelected : null,
+                        // categoriaPadreSelected : null
+                    });
+                }else{
+                    query = this.getQuery({
+                        sucursalSelected : this.sucursales[this.sucursalSelected].IdSucursal,
+                        // categoriaPadreSelected : null
+                    });
                 }
-                let query = this.getQuery({
-                    sucursalSelected : this.sucursales[this.sucursalSelected].IdSucursal,
-                    // categoriaPadreSelected : null
-                });
                 this.$router.replace({
                     query: query
                     // eslint-disable-next-line no-unused-vars
@@ -274,6 +418,70 @@
             }
         },
         methods:{
+            editarZonaDelivery(index,item){
+                this.modalZonaDelivery.item.sucursal.nombre = item.sucursal.sucursal
+                this.modalZonaDelivery.item.sucursal.sucursal_id = item.sucursal.IdSucursal
+                this.modalZonaDelivery.item.productoDelivery.nombre = item.delivery.producto
+                this.modalZonaDelivery.item.productoDelivery.producto_id = item.delivery.IdProducto
+                this.modalZonaDelivery.item.productoDelivery.precio = item.delivery.precioDeliv
+                this.modalZonaDelivery.index = index
+                this.$bvModal.show('modalZonaDelivery')
+            },
+            storeZonaDelivery(){
+                let params = this.modalZonaDelivery.item
+                axios.put('delivery/producto/'+params.productoDelivery.producto_id+'?XDEBUG_SESSION_START=PHPSTORM', {
+                    cliente_id : this.deliverySelectedObject.idDelivery,
+                    precioDeliv: params.productoDelivery.precio,
+                    producto: params.productoDelivery.nombre
+                }).then((response)=>{
+                    this.mapaArray.sucursales[this.modalZonaDelivery.index].delivery.precioDeliv = response.data.data.precioDeliv
+                    this.mapaArray.sucursales[this.modalZonaDelivery.index].delivery.producto = response.data.data.producto
+                }).catch((error)=>{
+                    console.log(error.response.data.message)
+                    this.log = error.response.data
+                }).finally(()=>{
+                    this.cargando = false;
+                });
+            },
+            storeZonaDistancia(){
+                let params = this.modalZonaDistancia.item
+                params.cliente_id = this.deliverySelectedObject.idDelivery
+                axios.post('delivery/cobertura/editZonaCobertura?XDEBUG_SESSION_START=PHPSTORM',params)
+                    .then((response)=>{
+                        if(this.modalZonaDistancia.index >=0){  //se edito
+                            this.mapaArray.circles.splice(this.modalZonaDistancia.index,1,response.data.data)
+                        }else{
+                            this.mapaArray.circles.push(response.data.data)
+                        }
+                    }).catch((error)=>{
+                        console.log(error.response.data.message)
+                        this.log = error.response.data
+                    }).finally(()=>{
+                        this.cargando = false;
+                    });
+            },
+            createZonaDistancia(){
+                this.modalZonaDistancia.item.distancia = 0
+                this.modalZonaDistancia.item.zona_distancia_id = -1
+                this.modalZonaDistancia.item.sucursal.nombre = this.sucursalSelectedObject.sucursal
+                this.modalZonaDistancia.item.sucursal.sucursal_id = this.sucursalSelectedObject.IdSucursal
+                this.modalZonaDistancia.item.productoDelivery.nombre = ''
+                this.modalZonaDistancia.item.productoDelivery.producto_id = -1
+                this.modalZonaDistancia.item.productoDelivery.precio = 0
+                this.modalZonaDistancia.index = -1
+                this.$bvModal.show('modalZonaDistancia')
+            },
+            editZonaDistancia(index,item){
+                this.modalZonaDistancia.item.distancia = item.radius
+                this.modalZonaDistancia.item.zona_distancia_id = item.idDistancia
+                this.modalZonaDistancia.item.sucursal.nombre = item.sucursal.sucursal
+                this.modalZonaDistancia.item.sucursal.sucursal_id = item.sucursal.IdSucursal
+                this.modalZonaDistancia.item.productoDelivery.nombre = item.delivery.producto
+                this.modalZonaDistancia.item.productoDelivery.producto_id = item.delivery.IdProducto
+                this.modalZonaDistancia.item.productoDelivery.precio = item.delivery.precioDeliv
+                this.modalZonaDistancia.index = index
+                this.$bvModal.show('modalZonaDistancia')
+            },
             guardarCambiosMapa(){
                 axios.post('delivery/cobertura',{
                     cliente_id : this.deliveries[this.deliverySelected].idDelivery,
