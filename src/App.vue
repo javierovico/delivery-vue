@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <HeaderNav/>
+    <HeaderNav @deliverySelectedChange="deliverySelectedChange" @sucursalSelectedChange="sucursalSelectedChange"/>
     <!--    <img alt="Vue logo" src="./assets/logo.png">-->
     <div class="container">
       <div class="col-md-12">
-        <router-view></router-view>
+        <router-view :deliverySelected="deliverySelected" :sucursalSelected="sucursalSelected"></router-view>
         <!--        <Home></Home>-->
         <!--        <HelloWorld msg="Welcome to Your Vue.js App"/>-->
       </div>
@@ -29,12 +29,26 @@
       // eslint-disable-next-line vue/no-unused-components
       HelloWorld
     },
+    data(){
+      return{
+        deliverySelected:null,
+        sucursalSelected:null
+      }
+    },
     mounted() {
       if (this.$store.getters.isAuthenticated) {
         console.log('logueado')
         this.$store.dispatch(USER_REQUEST);
       }
       // axios.get('/auth/user');
+    },
+    methods:{
+      deliverySelectedChange(del){
+        this.deliverySelected = del
+      },
+      sucursalSelectedChange(suc){
+        this.sucursalSelected = suc
+      }
     }
   }
 </script>
