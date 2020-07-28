@@ -22,6 +22,7 @@
     "vue-float-action-button": "^0.6.6",
     "vue-router": "^3.3.4",
     "vue2-google-maps": "^0.10.7",
+    "vuejs-datepicker": "^1.6.2",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -46,7 +47,12 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "no-unused-vars": ["error", { "args": "none" }]
+      "no-unused-vars": [
+        "error",
+        {
+          "args": "none"
+        }
+      ]
     }
   },
   "browserslist": [

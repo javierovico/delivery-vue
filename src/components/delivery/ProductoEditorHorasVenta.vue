@@ -8,13 +8,18 @@
                         <strong>Cargando...</strong>
                     </div>
                 </template>
-                <b-input-group v-else :prepend="'Nuevo '+titulo+':'" class="mt-3">
-                    <b-form-input v-model="newValue"></b-form-input>
-                    <b-input-group-append>
-                        <b-button variant="outline-success" @click="saveValue">Guardar</b-button>
-                        <b-button variant="info" @click="$emit('ocultarsedd')">Cancelar</b-button>
-                    </b-input-group-append>
-                </b-input-group>
+                <b-form-group label="Seleccione las Horas:">
+                    <b-form-checkbox-group
+                            id="checkbox-group-1"
+                            v-model="selected"
+                            :options="options"
+                            name="flavour-1"
+                    ></b-form-checkbox-group>
+                </b-form-group>
+                <b-input-group-append>
+                    <b-button variant="outline-success" @click="saveValue">Guardar</b-button>
+                    <b-button variant="info" @click="$emit('ocultarsedd')">Cancelar</b-button>
+                </b-input-group-append>
             </b-col>
         </b-row>
     </b-container>
@@ -25,11 +30,11 @@
     import $ from "jquery";
 
     export default {
-        name: "ProductoEditorString",
-        props: ['propiedad','titulo','deliverySelected','producto'],
+        name: "ProductoEditorHorasVenta",
+        props: ['propiedad','titulo','deliverySelected','producto','options'],
         data(){
             return{
-                newValue:'',
+                selected: [], // Must be an array reference!
                 cargando: false,
                 log: '',
             }
@@ -43,16 +48,24 @@
                 }
             },
             producto(){
-                if(this.producto){
-                    this.newValue = this.producto[this.propiedad];
+                if(this.producto && this.producto[this.propiedad].length>0){
+                    let data = this.producto[this.propiedad].split(',');
+                    for(let i = 0 ;i<data.length;i++){
+                        data[i] = parseInt(data[i])
+                    }
+                    this.selected = data
                 }else{
-                    this.newValue = '';
+                    this.selected = [];
                 }
             }
         },
         mounted() {
-            if(this.producto){
-                this.newValue = this.producto[this.propiedad];
+            if(this.producto && this.producto[this.propiedad].length>0){
+                let data = this.producto[this.propiedad].split(',');
+                for(let i = 0 ;i<data.length;i++){
+                    data[i] = parseInt(data[i])
+                }
+                this.selected = data
             }
         },
         methods:{
@@ -61,7 +74,10 @@
                 let params = {
                     cliente_id: this.deliverySelected.idDelivery
                 }
-                params[this.propiedad] = this.newValue
+                this.selected.sort(function(a, b) {
+                    return a - b;
+                });
+                params[this.propiedad] = this.selected.join(',')
                 console.log(params)
                 this.cargando = true
                 axios.put('delivery/producto/'+producto.IdProducto,params)

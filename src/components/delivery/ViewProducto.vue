@@ -57,28 +57,9 @@
                         {{(data.item.activo ===1)?((data.item.stock > 0)?'Activo':'Sin Stock'):'Inactivo'}}
                     </template>
                     <template v-slot:cell(acciones)="data">
-                        <b-dropdown variant="primary">
-                            <template v-slot:button-content>
-                                <b-icon icon="gear-fill" aria-hidden="true"></b-icon>
-                                Acciones
-                            </template>
-                            <b-dropdown-item-button @click="data.toggleDetails">
-                                <b-icon icon="eye" aria-hidden="true"></b-icon>
-                                {{ data.detailsShowing ? 'Ocultar' : 'Mostrar'}} Detalles
-                            </b-dropdown-item-button>
-                            <b-dropdown-item-button @click="updateCategoria(data.item.IdCategoriaProd)">
-                                <b-icon icon="pencil" aria-hidden="true"></b-icon>
-                                Editar
-                            </b-dropdown-item-button>
-                            <b-dropdown-item-button variant="danger" v-if="data.item.estado ===1" @click.prevent="estadoCategoria(data.item,0)">
-                                <b-icon icon="x-circle" aria-hidden="true"></b-icon>
-                                Inhabilitar
-                            </b-dropdown-item-button>
-                            <b-dropdown-item-button variant="success" v-else @click.prevent="estadoCategoria(data.item,1)">
-                                <b-icon icon="check" aria-hidden="true"></b-icon>
-                                Habilitar
-                            </b-dropdown-item-button>
-                        </b-dropdown>
+                        <b-button size="sm" variant="primary" class="mb-2" @click="data.toggleDetails">
+                            <b-icon icon="eye" aria-hidden="true"></b-icon>
+                        </b-button>
                     </template>
                 </b-table>
                 <b-col sm="7" md="6" class="my-1">
@@ -172,7 +153,7 @@
                 this.cargando = true;
                 axios.get('/delivery/producto',{params:params}).then((response)=>{
                     this.productos = response.data.data
-                    this.productos[0]._showDetails = true
+                    // this.productos[0]._showDetails = true
                 }).catch((error)=>{
                     console.log(error.response.data.message)
                     this.log = error.response.data
