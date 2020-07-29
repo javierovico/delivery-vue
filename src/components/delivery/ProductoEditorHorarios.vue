@@ -2,73 +2,11 @@
     <b-container fluid>
         <b-row class="justify-content-md-center">
             <b-col cols="12">
-                <p>{{'Sabores: de '+producto.producto}}</p>
-                <p>Cantidad de Items elegibles a la hora de la compra: {{producto.cantidadItems}}</p>
-                <template>
-                    <div>
-                        <h3>Agregar Sabor existente:</h3>
-
-                        <b-form inline @submit.prevent="onSubmit(1)">
-                            <b-input-group prepend="Nombre" class="mb-2 mr-sm-2 mb-sm-0">
-                                <b-form-input
-                                        v-model="form.busqueda"
-                                        type="text"
-                                        required
-                                        placeholder="Nombre..."
-                                ></b-form-input>
-                                <b-button variant="primary" type="submit">buscar</b-button>
-                            </b-input-group>
-                        </b-form>
-                        <b-table
-                                show-empty
-                                :busy="form.cargando" small :items="form.resultados" :fields="form.fields"
-                        >
-                            <template v-slot:table-busy>
-                                <div class="text-center text-danger my-2">
-                                    <b-spinner class="align-middle"></b-spinner>
-                                    <strong>Cargando...</strong>
-                                </div>
-                            </template>
-                            <template v-slot:cell(selected)="data">
-                                <template v-if="data.value">
-                                    <span aria-hidden="true">&check;</span>
-                                    <span class="sr-only">Selected</span>
-                                </template>
-                                <template v-else>
-                                    <span aria-hidden="true">&nbsp;</span>
-                                    <span class="sr-only">Not selected</span>
-                                </template>
-                            </template>
-                            <template v-slot:cell(accion)="data">
-                                <template v-if="data.item.selected">
-                                    <b-button size="sm" variant="danger" class="mb-2" @click="modificarSabor(data.item,false)" v-b-tooltip.rightbottom title="Quitar">
-                                        <b-icon icon="x-circle-fill" aria-label="Help"></b-icon>
-                                    </b-button>
-                                </template>
-                                <template v-else>
-                                    <b-button size="sm" variant="primary" class="mb-2" @click="modificarSabor(data.item,true)" v-b-tooltip.rightbottom title="Agregar">
-                                        <b-icon icon="check-circle" aria-hidden="true"></b-icon>
-                                    </b-button>
-                                </template>
-                            </template>
-                        </b-table>
-                        <b-col sm="7" md="6" class="my-1" v-if="form.totalRows>1">
-                            <b-pagination
-                                    v-model="form.currentPage"
-                                    :total-rows="form.totalRows"
-                                    :per-page="form.perPage"
-                                    @change="onSubmit"
-                                    align="fill"
-                                    size="sm"
-                                    class="my-0"
-                            ></b-pagination>
-                        </b-col>
-                    </div>
-                </template>
+                <h3>{{'Horarios de: '+producto.producto}}</h3>
                 <br>
                 <template>
                     <div>
-                        <h3>Agregar Sabor Nuevo:</h3>
+                        <h3>Agregar Nueva regla de horario:</h3>
                         <template v-if="agregarNuevo.cargando">
                             <div class="text-center text-danger my-2">
                                 <b-spinner class="align-middle"></b-spinner>
@@ -101,11 +39,11 @@
                     </div>
                 </template>
                 <br>
-                <h3>Sabores Actuales</h3>
+                <h3>Horarios Actuales</h3>
                 <b-table
+                        :tbody-tr-class="rowClass"
                         show-empty
-                        dark
-                        :busy="cargando || agregarNuevo.cargando" small :items="sabores" :fields="fields">
+                        :busy="cargando || agregarNuevo.cargando" small :items="horarios" :fields="fields">
                     <template v-slot:table-busy>
                         <div class="text-center text-danger my-2">
                             <b-spinner class="align-middle"></b-spinner>
@@ -141,48 +79,35 @@
     import axios from "axios";
 
     export default {
-        name: "ProductoEditorSabores",
+        name: "ProductoEditorHorarios",
         props: ['propiedad','titulo','deliverySelected','sucursalSelected','producto'],
         data(){
             return{
                 cargando: false,
                 log: '',
                 fields:[
-                    {key:'IdProductoAssets', label:'Id', sortable: true},
-                    {key:'producto.producto', label:'Sabor', sortable: true},
+                    {key:'IdHorario', label:'Id', sortable: true},
+                    {key:'dias_mes_venta', label:'Dia del mes', sortable: true, sortByFormatted: true, formatter: (value,key,item)=>{
+                            return value===0?'Segun dia Semana':(`El ${value} de cada mes`)
+                    }},
+                    {key:'dia', label:'Dia de la semana', sortable: true, sortByFormatted: true, formatter: (value,key,item)=>{
+                            return value===7?'De lues a Domingo':((0<=value && value<7)?(`Los ${this.intToDia(value)} de cada semana`):'Segun Dia mes')
+                        }},
+                    {key:'horaIni', label:'Hora Apertura', sortable: true},
+                    {key:'horaFin', label:'Hora Cierre', sortable: true},
+                    {key:'fechaIni', label:'Fecha Apertura', sortable: true},
+                    {key:'fechaFin', label:'Fecha Cierre', sortable: true},
                     {
                         key:'activo',
                         label:'Estado',
                         sortable:true, sortByFormatted: true, filterByFormatted: true,formatter: (value, key, item) => {
-                            return (item.producto.activo ===1)?((item.producto.stock > 0)?'Activo':'Sin Stock'):'Inactivo'
+                            const dataActual = new Date()
+                            return value?(((new Date(item.fechaIni))<= dataActual && dataActual <=(new Date(item.fechaFin)))?'activo':'vencido'):'inactivo'
                         },
                     },
                     'acciones',
                 ],
-                sabores:[],
-                form:{
-                    resultados:[],
-                    fields:[
-                        {key:'selected',label:'seleccionado'},
-                        {key:'IdProducto',sortable:true},
-                        'codeProducto',
-                        'producto',
-                        {
-                            key:'activo',
-                            label:'Estado',
-                            sortable:true, sortByFormatted: true, filterByFormatted: true,formatter: (value, key, item) => {
-                                return (item.activo ===1)?((item.stock > 0)?'Activo':'Sin Stock'):'Inactivo'
-                            },
-                        },
-                        'accion'
-                    ],
-                    busqueda:'',
-                    cargando:false,
-                    selected:[],
-                    currentPage:1,
-                    totalRows:1,
-                    perPage:10,
-                },
+                horarios:[],
                 agregarNuevo:{
                     cargando:false,
                     nombre:'',
@@ -200,13 +125,41 @@
                 }
             },
             producto(){
-                this.loadSabores()
+                this.loadHorarios()
             }
         },
         mounted() {
-            this.loadSabores()
+            this.loadHorarios()
         },
         methods:{
+            rowClass(item, type) {
+                if (!item || type !== 'row') return
+                const fechaActual = new Date()
+                let fecha1 = new Date(item.fechaIni.substring(0,4),item.fechaIni.substring(5,7)-1,item.fechaIni.substring(8,10),item.horaIni.substring(0,2),item.horaIni.substring(3,5))    //2020-05-03 05:30
+                let fecha2 = new Date(item.fechaFin.substring(0,4),item.fechaFin.substring(5,7)-1,item.fechaFin.substring(8,10),item.horaFin.substring(0,2),item.horaFin.substring(3,5))    //2020-05-03 05:30
+                if(!(item.activo && (fecha1 <= fechaActual && fechaActual <= fecha2))){
+                    return 'table-danger'
+                }
+                if(!(((fecha1.getHours()*60 + fecha1.getMinutes()) <= (fechaActual.getHours()*60 + (fechaActual.getMinutes()))) && ((fechaActual.getHours()*60 + fechaActual.getMinutes()) <= (fecha2.getHours()*60+ fecha2.getMinutes())))){
+                    console.log('fecha1 ',this.formatFecha(fecha1))
+                    console.log('fecha2 ',this.formatFecha(fecha2))
+                    console.log('fechaActu ',this.formatFecha(fechaActual))
+                    return 'table-danger'
+                }
+                if(!(  (item.dias_mes_venta === fechaActual.getDate())  ||  (item.dia === fechaActual.getDay())  )){
+                    return 'table-danger'
+                }
+                return 'table-success'
+            },
+            formatFecha(d){
+                return d.getFullYear() + "-" + ('0'+(d.getMonth()+1)).substr(-2) + "-" + ('0'+d.getDate()).substr(-2) + " " +
+                    ('0'+d.getHours()).substr(-2) + ":" + ('0'+d.getMinutes()).substr(-2);
+
+            },
+            intToDia(val){
+                const dias = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado']
+                return dias[val];
+            },
             agregarNuevoSabor(){
                 if(this.agregarNuevo.categoriaSel && this.agregarNuevo.nombre.length>0){
                     this.agregarNuevo.cargando = true
@@ -245,21 +198,20 @@
                     // this.$emit('productoChange',response.data.data)
                     let saborNuevo = null
                     if(agregar){
-                        response.data.data.sabores.forEach((e)=>{
+                        response.data.data.horarios.forEach((e)=>{
                             if(e.IdProductoAssets === sabor.IdProducto){
                                 saborNuevo = e
                             }
                         })
-                        this.sabores.push(saborNuevo)
+                        this.horarios.push(saborNuevo)
                     }else{
-                        this.sabores.forEach((e,index)=>{
+                        this.horarios.forEach((e,index)=>{
                             if(e.IdProductoAssets === sabor.IdProducto){
-                                this.sabores.splice(index,1)
+                                this.horarios.splice(index,1)
                                 saborNuevo = e
                             }
                         })
                     }
-                    this.regargarSeleccionados()
                     // this.$emit('saborModificado',saborNuevo,agregar)
                 }).catch((error)=>{
                     console.log(error.response.data.message)
@@ -278,7 +230,6 @@
                     producto:this.form.busqueda,
                 }}).then((response)=>{
                     this.form.resultados = response.data.data
-                    this.regargarSeleccionados()
                     this.form.totalRows = response.data.total
                     this.form.currentPage = page
                 }).catch((error)=>{
@@ -288,64 +239,32 @@
                     this.form.cargando = false;
                 });
             },
-            regargarSeleccionados(){
-                this.form.resultados.forEach((e)=>{
-                    let selected = false
-                    this.sabores.forEach((f)=>{
-                        if(e.IdProducto === f.IdProductoAssets){    //ya existia seleccionado
-                            selected = true
-                        }
-                    })
-                    e.selected = selected
-                })
-            },
             putisima(puta){
                 puta.toggleDetails()
             },
             productoSaborChange(productoSabor){
-                this.sabores.forEach((e,index)=>{
+                this.horarios.forEach((e,index)=>{
                     if(productoSabor.IdProducto === e.IdProductoAssets){
                         // this.producto.sabores[index].producto = productoSabor
                         // this.sabores.splice(index,1,productoSabor)
-                        this.sabores[index].producto = productoSabor
+                        this.horarios[index].producto = productoSabor
                         // this.$emit('productoChange',this.producto)
                     }
                 })
             },
-            loadSabores(){
-                // this.onSubmit(1)
-                this.cargarCategorias()
+            loadHorarios(){
                 this.cargando = true
                 axios.get('delivery/producto/'+this.producto.IdProducto,{params:{
                     cliente_id: this.deliverySelected.idDelivery,
                     sucursal_id: this.sucursalSelected.IdSucursal,
+                    relations: ['horarios']
                 }}).then((response)=>{
-                    this.sabores = response.data.sabores
-                    this.regargarSeleccionados()
+                    this.horarios = response.data.horarios
                 }).catch((error)=>{
                     this.log=error.response.data
                     console.log(error.response.data.message)
                 }).finally(()=>{
                     this.cargando = false
-                })
-            },
-            cargarCategorias(){
-                axios.get('delivery/categoria',{params:{
-                    cliente_id: this.deliverySelected.idDelivery,
-                    sucursal_id: this.sucursalSelected.IdSucursal,
-                    per_page: 100
-                }}).then((response)=>{
-                    this.agregarNuevo.categorias[0].text = 'Seleccione...'
-                    this.agregarNuevo.categorias.splice(1,this.agregarNuevo.categorias.length)
-                    response.data.data.forEach((e)=>{
-                        this.agregarNuevo.categorias.push({
-                            text: e.categoria,
-                            value: e
-                        })
-                    })
-                }).catch((error)=>{
-                    console.log(error.response.data.message)
-                    this.log = error.response.data
                 })
             },
         }
