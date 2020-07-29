@@ -74,7 +74,6 @@ export default {
       this.$emit('deliverySelectedChange',this.deliverySelectedComputed)
     },
     sucursalIndexSelected() {
-      console.log('change1')
       this.$emit('sucursalSelectedChange',this.sucursalSelectedComputed)
     },
   },

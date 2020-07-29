@@ -46,6 +46,7 @@
                         <view-producto-item
                                 :producto="row.item"
                                 :deliverySelected="deliverySelected"
+                                :sucursalSelected="sucursalSelected"
                                 v-on:ocultarse="row.toggleDetails"
                                 v-on:productoChange="productoChange"
                         ></view-producto-item>
@@ -131,6 +132,7 @@
                     if(e.IdProducto === productoNuevo.IdProducto){
                         productoNuevo._showDetails = true
                         this.productos.splice(index,1,productoNuevo)
+                        console.log('aldo'+'ViewProducto>productoChange>splice',productoNuevo)
                     }
                 })
             },

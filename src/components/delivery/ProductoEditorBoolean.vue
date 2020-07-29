@@ -91,7 +91,6 @@
                     cliente_id: this.deliverySelected.idDelivery
                 }
                 params[this.propiedad] = this.newValue
-                console.log(params)
                 this.cargando = true
                 axios.put('delivery/producto/'+producto.IdProducto,params)
                     .then((response)=>{

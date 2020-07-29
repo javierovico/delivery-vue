@@ -37,7 +37,6 @@
     },
     mounted() {
       if (this.$store.getters.isAuthenticated) {
-        console.log('logueado')
         this.$store.dispatch(USER_REQUEST);
       }
       // axios.get('/auth/user');

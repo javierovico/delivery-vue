@@ -13,6 +13,7 @@ import * as VueGoogleMaps from "vue2-google-maps";
 window.$ = window.jQuery = require('jquery')
 import $ from 'jquery'
 import 'bootstrap-notify';
+import ViewProductoItem from "./components/delivery/ViewProductoItem";
 
 $.notifyDefaults({
   // settings
@@ -64,6 +65,7 @@ Vue.use(VueFab, /* {
 } */)
 Vue.component("loading", Loading);
 Vue.component("center-container", CenterContainer);
+Vue.component('view-producto-item', ViewProductoItem);
 Vue.use(VueGoogleMaps, {
   load: {
     key: "AIzaSyClbud6185Id2nosGO3ko4c9xRoE9t8snk",

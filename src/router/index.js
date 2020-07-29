@@ -11,6 +11,7 @@ import CajaLista from "@/components/delivery/CajaLista";
 import Categoria from "@/components/delivery/Categoria";
 import Cobertura from "@/components/delivery/Cobertura";
 import Productos from "@/components/delivery/Productos";
+import Pruebas from "@/components/delivery/Pruebas";
 
 Vue.use(Router);
 
@@ -55,6 +56,12 @@ export default new Router({
       path: "/productos",
       name: "Producto",
       component: Productos,
+      beforeEnter: ifAuthenticated
+    },
+    {
+      path: "/pruebas",
+      name: "Prueba",
+      component: Pruebas,
       beforeEnter: ifAuthenticated
     },
     {

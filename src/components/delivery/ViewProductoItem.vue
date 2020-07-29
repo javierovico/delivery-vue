@@ -15,8 +15,9 @@
                         :titulo="row.item.k"
                         :producto="producto"
                         :deliverySelected="deliverySelected"
+                        :sucursalSelected="sucursalSelected"
                         v-on:ocultarsedd="row.toggleDetails"
-                        @productoChange="$emit('productoChange',$event)"
+                        @productoChange="productoChange(row,$event)"
                 ></component>
             </template>
             <template v-slot:cell(v)="data">
@@ -30,18 +31,15 @@
             </template>
             <template v-slot:cell(acciones)="data">
                 <template v-if="!data.detailsShowing">
-                    <b-button v-if="data.item.editable" size="sm" variant="primary" class="mb-2" @click="data.toggleDetails" v-b-tooltip.hover.rightbottom title="Editar">
+                    <b-button v-if="data.item.editable" size="sm" variant="primary" class="mb-2" @click="data.toggleDetails" v-b-tooltip.hover.rightbottom title="EditarItem">
                         <b-icon icon="pencil" aria-label="Help"></b-icon>
                     </b-button>
                 </template>
-<!--                <template v-else>-->
-<!--                    <b-button size="sm" variant="success" class="mb-2" @click="saveValue(data)" v-b-tooltip.hover title="Guardar">-->
-<!--                        <b-icon icon="check-circle-fill" aria-label="Help"></b-icon>-->
-<!--                    </b-button>-->
-<!--                    <b-button size="sm" variant="danger" class="mb-2" @click="cancelValue(data)" v-b-tooltip.hover title="Cancelar">-->
-<!--                        <b-icon icon="x-circle-fill" aria-label="Help"></b-icon>-->
-<!--                    </b-button>-->
-<!--                </template>-->
+                <template v-else>
+                    <b-button size="sm" variant="danger" class="mb-2" @click="data.toggleDetails" v-b-tooltip.rightbottom title="Cancelar">
+                        <b-icon icon="x-circle-fill" aria-label="Help"></b-icon>
+                    </b-button>
+                </template>
             </template>
         </b-table>
         <b-button size="sm" @click="$emit('ocultarse')">Ocultar Detalles</b-button>
@@ -51,18 +49,16 @@
 <script>
     import axios from "axios";
     import $ from "jquery";
-    // eslint-disable-next-line no-unused-vars
-    import ViewProductoItem from "./ViewProductoItem";
     import ProductoEditorString from "./ProductoEditorString";
     import ProductoEditorBoolean from "./ProductoEditorBoolean";
     import ProductoEditorHorasVenta from "./ProductoEditorHorasVenta";
     import ProductoEditorFecha from "./ProductoEditorFecha";
-
+    import ProductoEditorSabores from "./ProductoEditorSabores";
 
     export default {
         name: "ViewProductoItem",
-        props: ['producto','deliverySelected'],
-        components: {ViewProductoItem,ProductoEditorString, ProductoEditorBoolean, ProductoEditorHorasVenta, ProductoEditorFecha},
+        props: ['producto','deliverySelected','sucursalSelected'],
+        components: {ProductoEditorString, ProductoEditorBoolean, ProductoEditorHorasVenta, ProductoEditorFecha, ProductoEditorSabores},
         data(){
             return{
                 cargando: false,
@@ -73,11 +69,13 @@
                     'acciones'
                 ],
                 items:[],
+                sabores:[],
             }
         },
         watch:{
-            producto(){
-                this.setItems()
+            producto:{
+                deep:true,
+                handler(){this.setItems()}
             },
             log(){
                 if(this.log && this.log.message){
@@ -85,15 +83,22 @@
                         title: this.log.message
                     })
                 }
+            },
+            sabores(){
+                this.items.forEach((e)=>{
+                    if(e.o==='sabores'){
+                        e.v = this.cantidadSaboresString(this.producto.sabores)
+                    }
+                })
             }
         },
         mounted() {
             this.setItems()
         },
         methods:{
-            cancelValue(data){
-                data.item.edit = false
-                data.item._showDetails = false
+            productoChange(row,productoNuevo){
+                // row.toggleDetails()
+                this.$emit('productoChange',productoNuevo)
             },
             saveValue(data){
                 console.log(data)
@@ -115,13 +120,15 @@
                         this.cargando = false;
                     });
             },
-            // editValue(data){
-            //     data.item._showDetails = true
-            //     data.item.newValue = this.producto[data.item.o]
-            //     data.item.edit = true
-            // },
             setItems(){
                 this.items = this.getItems()
+                if(this.producto && this.producto.sabores){
+                    this.producto.sabores.forEach((e)=>{
+                        this.sabores.push(e.producto)
+                    })
+                }else{
+                    this.sabores.splice(0,this.sabores.length)
+                }
             },
             getItems(){
                 if(this.producto === null){
@@ -129,6 +136,13 @@
                 }
                 let producto = this.producto
                 let items = [
+                    {
+                        k:'Sabores',
+                        o:'sabores',
+                        v: this.cantidadSaboresString(producto.sabores),
+                        h: producto.tipo_producto.tipoProducto !== 'Compuesto',
+                        editor: 'producto-editor-sabores'
+                    },
                     {
                         k:'IdProducto',
                         o:'IdProducto',
@@ -399,6 +413,13 @@
                         v:producto.forma_pago
                     },
                 ]
+                // if(producto.tipo_producto.tipoProducto === 'Compuesto'){
+                //     items.push({
+                //         k:'Forma de pago',
+                //         o:'sabores_array',
+                //         v:producto.forma_pago
+                //     })
+                // }
                 for(let i = 0 ; i < items.length ; i++){
                     items[i].edit = false;
                     items[i].newValue = items[i].v
@@ -408,6 +429,8 @@
                         items[i].editor = 'producto-editor-string'
                     if(typeof items[i].props === "undefined")
                         items[i].props = {}
+                    if(typeof items[i].h !== "undefined" && items[i].h)
+                        items.splice(i,1)
                 }
                 return items;
             },
@@ -474,7 +497,22 @@
                         returnData += ''+e[0]+' # '
                 })
                 return returnData
-            }
+            },
+            cantidadSaboresString(sabores){
+                let total = sabores.length
+                let disponibles = 0;
+                let sinStock = 0;
+                sabores.forEach((e)=>{
+                    if(e.producto.activo === 1){
+                        if(e.producto.stock > 0){
+                            disponibles++
+                        }else{
+                            sinStock++
+                        }
+                    }
+                })
+                return disponibles + '/' + total + ' Sabores disponibles' +((sinStock===0)?'':(' ('+sinStock+' Activos sin stock)'))
+            },
         }
     }
 </script>
