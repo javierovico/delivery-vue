@@ -54,9 +54,6 @@
                     <template v-slot:cell(IdtipoProducto)="data">
                         {{data.item.tipo_producto.tipoProducto}}
                     </template>
-                    <template v-slot:cell(estado)="data">
-                        {{(data.item.activo ===1)?((data.item.stock > 0)?'Activo':'Sin Stock'):'Inactivo'}}
-                    </template>
                     <template v-slot:cell(acciones)="data">
                         <b-button size="sm" variant="primary" class="mb-2" @click="data.toggleDetails">
                             <b-icon icon="eye" aria-hidden="true"></b-icon>
@@ -102,7 +99,7 @@
                     {key:'IdProducto',sortable:true},
                     'codeProducto',
                     'producto',
-                    {key:'estado',sortable:true,sortByFormatted:true},
+                    {key:'estado',sortable:true,sortByFormatted:true,formatter:(value,key,item)=>{return (item.activo ===1)?((item.stock > 0)?'Activo':'Sin Stock'):'Inactivo'}},
                     {key:'IdtipoProducto',label:'Tipo Producto'},
                     {
                         key:'precioDeliv',

@@ -72,9 +72,10 @@ Vue.use(VueGoogleMaps, {
     libraries: "places,geometry", // necessary for places input
   }
 });
-// axios.defaults.baseURL = 'http://172.30.2.234:82/api';
+axios.defaults.baseURL = 'http://172.30.2.234:82/api';
 // axios.defaults.baseURL = 'http://172.30.1.243:8082/api';
-axios.defaults.baseURL = 'http://127.0.0.1:83/api';
+// axios.defaults.baseURL = 'http://127.0.0.1:83/api';
+// axios.defaults.baseURL = 'http://181.40.23.164/prueba';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 // axios.defaults.headers.common['Cookie'] = 'PHPSTORM';
 const token = localStorage.getItem('user-token')
