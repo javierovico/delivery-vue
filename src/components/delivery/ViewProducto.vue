@@ -55,9 +55,30 @@
                         {{data.item.tipo_producto.tipoProducto}}
                     </template>
                     <template v-slot:cell(acciones)="data">
-                        <b-button size="sm" variant="primary" class="mb-2" @click="data.toggleDetails">
-                            <b-icon icon="eye" aria-hidden="true"></b-icon>
-                        </b-button>
+                        <div>
+                            <b-dropdown variant="outline" size="sm" class="m-2">
+                                <template v-slot:button-content>
+                                    <b-icon icon="list" aria-hidden="true"></b-icon>
+                                    Acciones
+                                </template>
+                                <b-dropdown-item-button @click="updateProducto(data.item)">
+                                    <b-icon icon="pencil" aria-hidden="true"></b-icon>
+                                    Editar datos generales
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button @click="showModalProductoHorario(data.item)">
+                                    <b-icon icon="alarm" aria-hidden="true"></b-icon>
+                                    Ver Horarios
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button @click="showModalSabores(data.item)">
+                                    <b-icon icon="card-list" aria-hidden="true"></b-icon>
+                                    Ver Sabores
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button @click="showModalCupones(data.item)">
+                                    <b-icon icon="columns-gap" aria-hidden="true"></b-icon>
+                                    Ver Cupones
+                                </b-dropdown-item-button>
+                            </b-dropdown>
+                        </div>
                     </template>
                 </b-table>
                 <b-col sm="7" md="6" class="my-1">
@@ -72,19 +93,55 @@
                 </b-col>
             </b-col>
         </b-row>
+        <editor-creador-producto
+                :producto-in="productoModal"
+                :name-modal="nameEditorProductoModal"
+                :delivery-selected="deliverySelected"
+                @changeProducto="changeProducto"
+        />
+        <editor-creador-producto-horario-modal
+                :producto-selected="productoModal"
+                :name-modal="nameEditorProductoHorarioModal"
+                :delivery-selected="deliverySelected"
+                :sucursal-selected="sucursalSelected"
+        />
+        <visor-producto-sabores-modal
+                :producto-selected="productoModal"
+                :name-modal="nameEditorProductoSaborModal"
+                :delivery-selected="deliverySelected"
+                :sucursal-selected="sucursalSelected"
+        />
+        <VisorProductoCupon
+                :producto-selected="modalCupones.producto"
+                :name-modal="modalCupones.nameModal"
+        />
     </b-container>
 </template>
 
 <script>
     import axios from "axios";
     import ViewProductoItem from "./ViewProductoItem";
+    import EditorCreadorProducto from "@/components/delivery/Producto/EditorCreadorProducto";
+    import ProductoItem from "@/components/delivery/ProductoItem";
+    import $ from "jquery";
+    import EditorCreadorProductoHorarioModal
+        from "@/components/delivery/ProductoHorario/VisorProductosHorarioModal";
+    import VisorProductoSaboresModal from "@/components/delivery/ProductoSabor/VisorProductoSaboresModal";
+    import VisorProductoCupon from "@/components/delivery/ProductoCupon/VisorProductoCupon";
 
     export default {
         name: "ViewProducto",
-        components: {ViewProductoItem},
+        components: {
+            VisorProductoCupon,
+            VisorProductoSaboresModal,
+            EditorCreadorProductoHorarioModal, EditorCreadorProducto, ViewProductoItem},
         props:['categoriaSelected','deliverySelected','sucursalSelected'],
         data(){
             return{
+                productoModal: ProductoItem.construir(),
+                nameEditorProductoModal: 'editor-producto-modal',
+                nameEditorProductoSaborModal: 'editor-producto-sabor-modal',
+                nameEditorProductoHorarioModal: 'editor-producto-horario-modal',
                 productos: [],
                 cargando: false,
                 currentPage: 1,
@@ -111,6 +168,10 @@
                     },
                     'acciones'
                 ],
+                modalCupones:{
+                    producto: ProductoItem.construir(),
+                    nameModal: 'modal-product-cupon'
+                }
             }
         },
         watch:{
@@ -124,6 +185,46 @@
             }
         },
         methods:{
+            changeProducto(producto){
+                let change = false;
+                this.productos.forEach((e,index)=>{
+                    if(e.IdProducto === producto.IdProducto){
+                        this.productos.splice(index,1,producto)
+                        change = true
+                    }
+                })
+                if(!change){
+                    this.productos.push(producto)
+                }
+            },
+            showModalSabores(producto){
+                this.productoModal = ProductoItem.FromInput(producto)
+                this.$bvModal.show(this.nameEditorProductoSaborModal)
+            },
+            showModalCupones(producto){
+                this.modalCupones.producto = ProductoItem.FromInput(producto)
+                this.$bvModal.show(this.modalCupones.nameModal)
+            },
+            updateProducto(producto){
+                this.productoModal = ProductoItem.FromInput(producto)
+                this.$bvModal.show(this.nameEditorProductoModal)
+            },
+            showModalProductoHorario(producto){
+                this.productoModal = ProductoItem.FromInput(producto)
+                this.$bvModal.show(this.nameEditorProductoHorarioModal)
+            },
+            createProducto(){
+                if(this.categoriaSelected){
+                    this.productoModal = ProductoItem.construir()
+                        .constructorIdCategoriaProd(this.categoriaSelected.IdCategoriaProd)
+                        .constructorIdSucursal(this.sucursalSelected.IdSucursal)
+                    this.$bvModal.show(this.nameEditorProductoModal)
+                }else{
+                    $.notify({
+                        title: 'ninguna categoria seleccionada'
+                    })
+                }
+            },
             productoChange(productoNuevo){
                 this.productos.forEach((e,index)=>{
                     if(e.IdProducto === productoNuevo.IdProducto){

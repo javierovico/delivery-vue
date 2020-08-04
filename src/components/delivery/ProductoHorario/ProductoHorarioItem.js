@@ -38,6 +38,10 @@ export default class ProductoHorarioItem {
         }
     }
 
+    isCreated(){
+        return this.IdHorario && this.IdHorario >0
+    }
+
     static FromInput(e){
         return new ProductoHorarioItem(e.IdProducto, e.IdHorario, e.dia, e.horaIni, e.horaFin, e.fechaIni, e.fechaFin, e.dias_mes_venta, e.activo);
     }
@@ -71,5 +75,14 @@ export default class ProductoHorarioItem {
     static formatFecha(d){
         return d.getFullYear() + "-" + ('0'+(d.getMonth()+1)).substr(-2) + "-" + ('0'+d.getDate()).substr(-2) + " " +
             ('0'+d.getHours()).substr(-2) + ":" + ('0'+d.getMinutes()).substr(-2);
+    }
+
+    static construir(){
+        return new ProductoHorarioItem()
+    }
+
+    constructorIdProducto(id){
+        this.IdProducto = id;
+        return this
     }
 }

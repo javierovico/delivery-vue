@@ -43,7 +43,8 @@
                 :sort-direction="sortDirection"
                 @filtered="onFiltered"
                 :busy="cargando" small head-variant="dark" striped hover
-                :items="categoriasActual" :fields="[{key:'IdCategoriaProd',sortable: true},'IdCategoriaDeliv',{key:'categoria',sortable: true},{key:'estado',sortable:true,sortByFormatted:true,filterByFormatted:true},{key:'orden',sortable:true},'grupoArtiulo','linea','acciones']">
+                :items="categoriasActual"
+                :fields="[{key:'IdCategoriaProd',sortable: true},'IdCategoriaDeliv',{key:'categoria',sortable: true},{key:'estado',sortable:true,sortByFormatted:true,filterByFormatted:true},{key:'orden',sortable:true},'grupoArtiulo','linea',{key:'productos_venta_count',label:'Cant Prod',sortable: true},'acciones']">
             <template v-slot:table-busy>
                 <div class="text-center text-danger my-2">
                     <b-spinner class="align-middle"></b-spinner>

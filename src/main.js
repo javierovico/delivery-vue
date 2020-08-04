@@ -14,6 +14,7 @@ window.$ = window.jQuery = require('jquery')
 import $ from 'jquery'
 import 'bootstrap-notify';
 import ViewProductoItem from "./components/delivery/ViewProductoItem";
+import EditorCreadorProducto from "@/components/delivery/Producto/EditorCreadorProducto";
 
 $.notifyDefaults({
   // settings
@@ -66,14 +67,15 @@ Vue.use(VueFab, /* {
 Vue.component("loading", Loading);
 Vue.component("center-container", CenterContainer);
 Vue.component('view-producto-item', ViewProductoItem);
+Vue.component('editor-creador-producto',EditorCreadorProducto);
 Vue.use(VueGoogleMaps, {
   load: {
     key: "AIzaSyClbud6185Id2nosGO3ko4c9xRoE9t8snk",
     libraries: "places,geometry", // necessary for places input
   }
 });
-axios.defaults.baseURL = 'http://172.30.2.234:82/api';
-// axios.defaults.baseURL = 'http://172.30.1.243:8082/api';
+// axios.defaults.baseURL = 'http://172.30.2.234:82/api';
+axios.defaults.baseURL = 'http://172.30.1.243:8082/api';
 // axios.defaults.baseURL = 'http://127.0.0.1:83/api';
 // axios.defaults.baseURL = 'http://181.40.23.164/prueba';
 axios.defaults.headers.post['Content-Type'] = 'application/json';

@@ -8,6 +8,7 @@
                 <template>
                     <div>
                         <h3>Anhadir nuevo producto existente:</h3>
+                        <span>Para crear uno nuevo debe hacerlo primero en el apartado de acciones</span>
                         <b-form inline @submit.prevent="onSubmit(1)">
                             <b-input-group prepend="Nombre" class="mb-2 mr-sm-2 mb-sm-0">
                                 <b-form-input

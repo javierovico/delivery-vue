@@ -1,3 +1,5 @@
+import ProductoHorarioItem from "@/components/delivery/ProductoHorario/ProductoHorarioItem";
+
 export default class ProductoItem {
     IdProducto
     codeProducto
@@ -44,7 +46,12 @@ export default class ProductoItem {
     _isMostrandoItems = false;
     _selected = false       //indicar que fue marcado ya (si es agregable)
 
-    constructor(IdProducto=null, codeProducto=null, producto=null, precioDeliv=null, precioCarryOut=null, descripcion=null, abrev=null, activo=null, servicio=null, stock=null, updateStock=null, imagen=null, fechaAlta=null, fechaUpd=null, cantidadItems=null, calculo=null, IdCategoriaProd=null, IdtipoProducto=null, cantidadRequerida=null, cantidadMaxima=null, vdesdefecha=null, vhastafecha=null, id_sucursal=null, is_prec_tot=null, dias_venta=null, horas_venta=null, dias_mes_venta=null, grupoarticulo=null, id_acuerdo_desc=null, id_sub_categoria=null, cant_porciones=null, TipoMasa=null, pro_view=null, pro_size=null, forma_pago=null, tipo_producto = null, formula = null) {
+    constructor(IdProducto=null, codeProducto=null, producto=null, precioDeliv=null, precioCarryOut=null, descripcion=null, abrev=null, activo=1, servicio=0, stock=1, updateStock=0, imagen='', fechaAlta=null, fechaUpd=null, cantidadItems=0, calculo=1, IdCategoriaProd=null, IdtipoProducto=1, cantidadRequerida=1, cantidadMaxima=0,
+                vdesdefecha=ProductoHorarioItem.getDate(),
+                vhastafecha='2099-12-31',
+                id_sucursal=null, is_prec_tot=1, dias_venta='0,1,2,3,4,5,6', horas_venta='', dias_mes_venta='', grupoarticulo='',
+                id_acuerdo_desc='', id_sub_categoria=0, cant_porciones=0,
+                TipoMasa=-1, pro_view=0, pro_size=-1, forma_pago=null, tipo_producto = null, formula = null) {
         this.IdProducto = IdProducto;
         this.codeProducto = codeProducto;
         this.producto = producto;
@@ -84,6 +91,10 @@ export default class ProductoItem {
         this.formula = formula
     }
 
+    isCreated(){
+        return (this.IdProducto !== null && this.IdProducto > 0)
+    }
+
     modoEdit(){
         this._isMostrandoItems = false;
         this._isEditando = (this._showDetails)?(!this._isEditando):true
@@ -104,11 +115,25 @@ export default class ProductoItem {
         return new ProductoItem(e.IdProducto, e.codeProducto, e.producto, e.precioDeliv, e.precioCarryOut, e.descripcion, e.abrev, e.activo, e.servicio, e.stock, e.updateStock, e.imagen, e.fechaAlta, e.fechaUpd, e.cantidadItems, e.calculo, e.IdCategoriaProd, e.IdtipoProducto, e.cantidadRequerida, e.cantidadMaxima, e.vdesdefecha, e.vhastafecha, e.id_sucursal, e.is_prec_tot, e.dias_venta, e.horas_venta, e.dias_mes_venta, e.grupoarticulo, e.id_acuerdo_desc, e.id_sub_categoria, e.cant_porciones, e.TipoMasa, e.pro_view, e.pro_size, e.forma_pago, e.tipo_producto,e.formula)
     }
 
+    static construir(){
+        return (new ProductoItem())
+    }
 
-    crearParametro(idDelivery,IdSucursal){
+    constructorIdCategoriaProd(id){
+        this.IdCategoriaProd = id;
+        return this
+    }
+
+    constructorIdSucursal(id){
+        this.id_sucursal = id
+        return this
+    }
+
+
+    crearParametro(idDelivery){
         return{
             cliente_id: idDelivery,
-            sucursal_id: IdSucursal,
+            sucursal_id: this.id_sucursal,
             IdProducto: this.IdProducto,
             codeProducto: this.codeProducto,
             producto: this.producto,
