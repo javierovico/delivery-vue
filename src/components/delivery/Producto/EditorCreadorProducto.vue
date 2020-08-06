@@ -106,7 +106,7 @@
                         <b-row id="checkbox-group-2">
                             <b-form-checkbox v-model="producto.activo" :value="1" :unchecked-value="0">Activo</b-form-checkbox>
                             <b-form-checkbox v-model="producto.stock" :value="1" :unchecked-value="0">Stock</b-form-checkbox>
-                            <b-form-checkbox v-model="producto.is_prec_tot" :value="1" :unchecked-value="0">Es Precio Total</b-form-checkbox>
+                            <b-form-checkbox v-model="producto.is_prec_tot" :value="1" :unchecked-value="0">Uno por ticket</b-form-checkbox>
                         </b-row>
                     </b-form-group>
                     <b-form-group label="Fecha de actividad: (desde - hasta)" v-if="opcionesAvanzadas">

@@ -1,14 +1,14 @@
 export default class ProductoCupon {
     IdCuponProducto;
     descripcion;
-    cantidadRequerida;
-    cantidadMaxima;
+    cantidadRequerida;          //debe ser igual a cantidad maxima
+    cantidadMaxima;          //debe ser igual a cantidad maxima
     precioMinimo;
     includeOption;
     cantidadOption;
     IdProducto;
     pro_view;
-    cantidadItems;
+    cantidadItems;          //debe ser igual a cantidad maxima
     idTipoCupon;
     cant_porciones;
     calculo;
@@ -16,13 +16,15 @@ export default class ProductoCupon {
     descuento;
     pro_size;
     descuento_valor;
+    //relaciones
+    formula;
     //variables de vista
     _isEditando = true;
     _showDetails = false;
     _isMostrandoItems = false;
 
 
-    constructor(IdCuponProducto = 0, descripcion = '', cantidadRequerida = -1, cantidadMaxima = -1, precioMinimo = 0, includeOption = 0, cantidadOption = 0, IdProducto = 0, pro_view = 0, cantidadItems = 1, idTipoCupon = 1, cant_porciones = 0, calculo = 1, precio = 0, descuento = 0, pro_size = 0, descuento_valor = 0){
+    constructor(IdCuponProducto = 0, descripcion = '', cantidadRequerida = -1, cantidadMaxima = 1, precioMinimo = 0, includeOption = 0, cantidadOption = 0, IdProducto = 0, pro_view = 0, cantidadItems = 1, idTipoCupon = 1, cant_porciones = 0, calculo = 1, precio = 0, descuento = 0, pro_size = 0, descuento_valor = 0,formula = null){
         this.IdCuponProducto = IdCuponProducto;
         this.descripcion = descripcion;
         this.cantidadRequerida = cantidadRequerida;
@@ -40,6 +42,16 @@ export default class ProductoCupon {
         this.descuento = descuento;
         this.pro_size = pro_size;
         this.descuento_valor = descuento_valor;
+        this.formula = formula;
+    }
+
+    prepararDatosRepetidos(){
+        // this.cantidadRequerida = this.cantidadMaxima
+        this.cantidadItems = this.cantidadMaxima
+    }
+
+    isCreated(){
+        return this.IdCuponProducto && this.IdCuponProducto >0;
     }
 
     modoEdit(){
@@ -72,7 +84,8 @@ export default class ProductoCupon {
         e.precio,
         e.descuento,
         e.pro_size,
-        e.descuento_valor)
+        e.descuento_valor,
+        e.formula)
     }
 
 

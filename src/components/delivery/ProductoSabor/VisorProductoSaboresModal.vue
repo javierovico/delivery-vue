@@ -1,6 +1,10 @@
 <template>
     <div>
-        <b-modal size="xl" :id="nameModal" ok-only ok-title="Cerrar" :title="'Editar Sabores del Producto '+producto.producto">
+        <b-modal
+                :no-close-on-esc="cargando"
+                :no-close-on-backdrop="cargando"
+                :hide-header-close="cargando"
+                size="xl" :id="nameModal" ok-only ok-title="Cerrar" :title="'Editar Sabores del Producto '+producto.producto">
             <b-container fluid>
                 <b-row class="justify-content-md-center">
                     <b-col cols="12">
@@ -133,12 +137,12 @@
                 this.cargando = true
                 let axiosVar = null
                 if(agregar){
-                    axiosVar = axios.post(`delivery/productoSabor/${this.producto.IdProducto}`, {
+                    axiosVar = axios.post(`delivery/producto/${this.producto.IdProducto}/sabor`, {
                         cliente_id: this.deliverySelected.idDelivery,
                         sabor_id: sabor.IdProducto,
                     })
                 }else{
-                    axiosVar = axios.delete(`delivery/productoSabor/${this.producto.IdProducto}/${sabor.IdProducto}`, {params:{
+                    axiosVar = axios.delete(`delivery/producto/${this.producto.IdProducto}/sabor/${sabor.IdProducto}`, {params:{
                         cliente_id: this.deliverySelected.idDelivery,
                     }})
                 }
@@ -172,7 +176,7 @@
             },
             loadSabores(){
                 this.cargando = true
-                axios.get('delivery/productoSabor/'+this.producto.IdProducto,{params:{
+                axios.get(`delivery/producto/${this.producto.IdProducto}/sabor`,{params:{
                     cliente_id: this.deliverySelected.idDelivery,
                     perPage: 100,
                 }}).then((response)=>{

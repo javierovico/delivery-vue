@@ -39,6 +39,7 @@ export default class ProductoItem {
     //relaciones de base
     tipo_producto
     formula
+    categoria
 
     //variables de vista
     _isEditando = true;
@@ -46,12 +47,12 @@ export default class ProductoItem {
     _isMostrandoItems = false;
     _selected = false       //indicar que fue marcado ya (si es agregable)
 
-    constructor(IdProducto=null, codeProducto=null, producto=null, precioDeliv=null, precioCarryOut=null, descripcion=null, abrev=null, activo=1, servicio=0, stock=1, updateStock=0, imagen='', fechaAlta=null, fechaUpd=null, cantidadItems=0, calculo=1, IdCategoriaProd=null, IdtipoProducto=1, cantidadRequerida=1, cantidadMaxima=0,
+    constructor(IdProducto=null, codeProducto=null, producto='', precioDeliv=0, precioCarryOut=0, descripcion=null, abrev=null, activo=1, servicio=0, stock=1, updateStock=0, imagen='', fechaAlta=null, fechaUpd=null, cantidadItems=0, calculo=1, IdCategoriaProd=null, IdtipoProducto=1, cantidadRequerida=1, cantidadMaxima=0,
                 vdesdefecha=ProductoHorarioItem.getDate(),
                 vhastafecha='2099-12-31',
-                id_sucursal=null, is_prec_tot=1, dias_venta='0,1,2,3,4,5,6', horas_venta='', dias_mes_venta='', grupoarticulo='',
+                id_sucursal=null, is_prec_tot=0, dias_venta='0,1,2,3,4,5,6', horas_venta='', dias_mes_venta='', grupoarticulo='',
                 id_acuerdo_desc='', id_sub_categoria=0, cant_porciones=0,
-                TipoMasa=-1, pro_view=0, pro_size=-1, forma_pago=null, tipo_producto = null, formula = null) {
+                TipoMasa=-1, pro_view=0, pro_size=-1, forma_pago=null, tipo_producto = null, formula = null, categoria = null) {
         this.IdProducto = IdProducto;
         this.codeProducto = codeProducto;
         this.producto = producto;
@@ -89,6 +90,7 @@ export default class ProductoItem {
         this.forma_pago = forma_pago;
         this.tipo_producto = tipo_producto
         this.formula = formula
+        this.categoria = categoria
     }
 
     isCreated(){
@@ -112,7 +114,7 @@ export default class ProductoItem {
     }
 
     static FromInput(e){
-        return new ProductoItem(e.IdProducto, e.codeProducto, e.producto, e.precioDeliv, e.precioCarryOut, e.descripcion, e.abrev, e.activo, e.servicio, e.stock, e.updateStock, e.imagen, e.fechaAlta, e.fechaUpd, e.cantidadItems, e.calculo, e.IdCategoriaProd, e.IdtipoProducto, e.cantidadRequerida, e.cantidadMaxima, e.vdesdefecha, e.vhastafecha, e.id_sucursal, e.is_prec_tot, e.dias_venta, e.horas_venta, e.dias_mes_venta, e.grupoarticulo, e.id_acuerdo_desc, e.id_sub_categoria, e.cant_porciones, e.TipoMasa, e.pro_view, e.pro_size, e.forma_pago, e.tipo_producto,e.formula)
+        return new ProductoItem(e.IdProducto, e.codeProducto, e.producto, e.precioDeliv, e.precioCarryOut, e.descripcion, e.abrev, e.activo, e.servicio, e.stock, e.updateStock, e.imagen, e.fechaAlta, e.fechaUpd, e.cantidadItems, e.calculo, e.IdCategoriaProd, e.IdtipoProducto, e.cantidadRequerida, e.cantidadMaxima, e.vdesdefecha, e.vhastafecha, e.id_sucursal, e.is_prec_tot, e.dias_venta, e.horas_venta, e.dias_mes_venta, e.grupoarticulo, e.id_acuerdo_desc, e.id_sub_categoria, e.cant_porciones, e.TipoMasa, e.pro_view, e.pro_size, e.forma_pago, e.tipo_producto,e.formula,e.categoria)
     }
 
     static construir(){

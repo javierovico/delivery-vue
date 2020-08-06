@@ -1,15 +1,14 @@
 <template>
-
     <div>
         <b-modal
-                :no-close-on-esc="cargando"
-                :no-close-on-backdrop="cargando"
-                :hide-header-close="cargando"
-                size="xl" :id="nameModal" ok-only ok-title="Cerrar" :title="'Agregar/Quitar Sabores al producto '+producto.producto">
+                v-model="modalSetting.show"
+                :no-close-on-esc="cargando || modalSetting.cargando"
+                :no-close-on-backdrop="cargando || modalSetting.cargando"
+                :hide-header-close="cargando || modalSetting.cargando"
+                size="xl" ok-only ok-title="Cerrar" :title="'Agregar/Quitar Options al producto '+producto.producto">
             <div>
                 <span>
-                    Nota: Esto solo sirve para agregar un sabor que ya existia, para crear el sabor debe hacerlo desde "Crear Nuevo Producto"
-                    y elegir "Simple Sabor" como Tipo de producto
+                    Nota: Esto solo sirve para agregar una option que ya existia, para crear, primero, debe hacerlo desde "Crear Nuevo Producto"
                 </span>
                 <template>
                     <div>
@@ -26,7 +25,7 @@
                         </b-form>
                         <b-table
                                 show-empty
-                                :busy="cargando" small :items="resultados" :fields="fields"
+                                :busy="cargando || modalSetting.cargando" small :items="resultados" :fields="fields"
                         >
                             <template v-slot:table-busy>
                                 <div class="text-center text-danger my-2">
@@ -46,12 +45,12 @@
                             </template>
                             <template v-slot:cell(accion)="data">
                                 <template v-if="data.item._selected">
-                                    <b-button size="sm" variant="danger" class="mb-2" @click="$emit('agregarQuitarProducto',data.item,false)" v-b-tooltip.rightbottom title="Quitar">
+                                    <b-button size="sm" variant="danger" class="mb-2" @click="$emit('agregarQuitarOption',data.item,false)" v-b-tooltip.rightbottom title="Quitar">
                                         <b-icon icon="x-circle-fill" aria-label="Help"></b-icon>
                                     </b-button>
                                 </template>
                                 <template v-else>
-                                    <b-button size="sm" variant="primary" class="mb-2" @click="$emit('agregarQuitarProducto',data.item,true)" v-b-tooltip.rightbottom title="Agregar">
+                                    <b-button size="sm" variant="primary" class="mb-2" @click="$emit('agregarQuitarOption',data.item,true)" v-b-tooltip.rightbottom title="Agregar">
                                         <b-icon icon="check-circle" aria-hidden="true"></b-icon>
                                     </b-button>
                                 </template>
@@ -80,8 +79,8 @@
     import axios from "axios";
 
     export default {
-        name: "EditorItemProductoSaborModal",
-        props: ['nameModal','productoSelected','deliverySelected','sucursalSelected','sabores'],
+        name: "EditorItemProductoOptionModal",
+        props: ['modalSetting','productoSelected','deliverySelected','sucursalSelected','options'],
         data(){
             return {
                 producto: new ProductoItem(),
@@ -92,6 +91,7 @@
                     {key:'IdProducto',sortable:true},
                     'codeProducto',
                     'producto',
+                    {key:'precioDeliv',label:'precioDel', formatter: (value)=>{ return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");}},
                     {
                         key:'activo',
                         label:'Estado',
@@ -112,38 +112,37 @@
             productoSelected(){
                 this.init()
             },
-            sabores(){
+            options(){
                 this.regargarSeleccionados()
             }
         },
         mounted() {
             this.init()
         },
-        methods:{
-            init(){
+        methods: {
+            init() {
                 this.producto = this.productoSelected ? ProductoItem.FromInput(this.productoSelected) : new ProductoItem()
                 this.regargarSeleccionados()
-                // if(this.producto.isCreated()){
-                //     this.loadSabores()
-                // }
             },
-            onSubmit(page = 1){
+            onSubmit(page = 1) {
                 this.cargando = true
-                axios.get('delivery/producto',{params:{
+                axios.get('delivery/producto', {
+                    params: {
                         cliente_id: this.deliverySelected.idDelivery,
                         sucursal_id: this.sucursalSelected.IdSucursal,
                         page: page,
-                        IdtipoProducto: 4,
-                        producto:this.busqueda,
-                    }}).then((response)=>{
-                    this.resultados.splice(0,this.resultados.length)
-                    response.data.data.forEach((e)=>{
+                        producto: this.busqueda,
+
+                    }
+                }).then((response) => {
+                    this.resultados.splice(0, this.resultados.length)
+                    response.data.data.forEach((e) => {
                         this.resultados.push(ProductoItem.FromInput(e))
                     })
                     this.regargarSeleccionados()
                     this.totalRows = response.data.total
                     this.currentPage = page
-                }).catch((error)=>{
+                }).catch((error) => {
                     this.$bvToast.toast(`Error buscando productos, revisa el log: ${error.response.data.message}`, {
                         variant: 'danger',
                         title: 'Administrador Producto',
@@ -151,57 +150,22 @@
                         appendToast: false
                     })
                     console.log(error.response.data)
-                }).finally(()=>{
+                }).finally(() => {
                     this.cargando = false;
                 });
             },
-            regargarSeleccionados(){
-                this.resultados.forEach((e)=>{
+            regargarSeleccionados() {
+                this.resultados.forEach((e) => {
                     let selected = false
-                    this.sabores.forEach((f)=>{
-                        if(e.IdProducto === f.IdProducto){    //ya existia seleccionado
+                    this.options.forEach((f) => {
+                        if (e.IdProducto === f.IdProducto) {    //ya existia seleccionado
                             selected = true
                         }
                     })
                     e.setSelected(selected)
                 })
             },
-            // modificarSabor(sabor, agregar){
-            //     this.cargando = true
-            //     axios.put(`delivery/productoSabor/${this.producto.IdProducto}/${sabor.IdProducto}`+this.producto.IdProducto,{
-            //         cliente_id: this.deliverySelected.idDelivery,
-            //         sucursal_id: this.sucursalSelected.IdSucursal,
-            //         saboresArray:[
-            //             {id:sabor.IdProducto,value:agregar}
-            //         ]
-            //     }).then((response)=>{
-            //         // this.$emit('productoChange',response.data.data)
-            //         let saborNuevo = null
-            //         if(agregar){
-            //             response.data.data.sabores.forEach((e)=>{
-            //                 if(e.IdProductoAssets === sabor.IdProducto){
-            //                     saborNuevo = e
-            //                 }
-            //             })
-            //             this.sabores.push(saborNuevo)
-            //         }else{
-            //             this.sabores.forEach((e,index)=>{
-            //                 if(e.IdProductoAssets === sabor.IdProducto){
-            //                     this.sabores.splice(index,1)
-            //                     saborNuevo = e
-            //                 }
-            //             })
-            //         }
-            //         this.regargarSeleccionados()
-            //         // this.$emit('saborModificado',saborNuevo,agregar)
-            //     }).catch((error)=>{
-            //         console.log(error.response.data.message)
-            //         this.log = error.response.data
-            //     }).finally(()=>{
-            //         this.cargando = false
-            //     })
-            // },
-        }
+        },
     }
 </script>
 

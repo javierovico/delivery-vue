@@ -1,6 +1,10 @@
 <template>
     <div>
-        <b-modal size="xl" @ok="updateHorario" :id="nameModal" cancel-title="Cancelar" :ok-title="(horarioEdit.IdHorario>0)?'Actualizar':'Agregar'" :title="'Horario del Producto '+productoSelected.producto">
+        <b-modal
+                :no-close-on-esc="cargando"
+                :no-close-on-backdrop="cargando"
+                :hide-header-close="cargando"
+                size="xl" @ok="updateHorario" :id="nameModal" cancel-title="Cancelar" :ok-title="(horarioEdit.IdHorario>0)?'Actualizar':'Agregar'" :title="'Horario del Producto '+productoSelected.producto">
             <div>
                 <b-form inline>
                     <template>

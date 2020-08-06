@@ -11,6 +11,7 @@ import router from "./router";
 import VueFab from 'vue-float-action-button'
 import * as VueGoogleMaps from "vue2-google-maps";
 window.$ = window.jQuery = require('jquery')
+import VueSimpleAlert from "vue-simple-alert";
 import $ from 'jquery'
 import 'bootstrap-notify';
 import ViewProductoItem from "./components/delivery/ViewProductoItem";
@@ -68,6 +69,7 @@ Vue.component("loading", Loading);
 Vue.component("center-container", CenterContainer);
 Vue.component('view-producto-item', ViewProductoItem);
 Vue.component('editor-creador-producto',EditorCreadorProducto);
+Vue.use(VueSimpleAlert);
 Vue.use(VueGoogleMaps, {
   load: {
     key: "AIzaSyClbud6185Id2nosGO3ko4c9xRoE9t8snk",

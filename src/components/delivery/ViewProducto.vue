@@ -69,13 +69,17 @@
                                     <b-icon icon="alarm" aria-hidden="true"></b-icon>
                                     Ver Horarios
                                 </b-dropdown-item-button>
-                                <b-dropdown-item-button @click="showModalSabores(data.item)">
+                                <b-dropdown-item-button @click="showModalSabores(data.item)" v-if="data.item.tipo_producto.tipoProducto === 'Compuesto'">
                                     <b-icon icon="card-list" aria-hidden="true"></b-icon>
                                     Ver Sabores
                                 </b-dropdown-item-button>
                                 <b-dropdown-item-button @click="showModalCupones(data.item)">
                                     <b-icon icon="columns-gap" aria-hidden="true"></b-icon>
                                     Ver Cupones
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button @click="showModalOptions(data.item)">
+                                    <b-icon icon="columns-gap" aria-hidden="true"></b-icon>
+                                    Ver Options
                                 </b-dropdown-item-button>
                             </b-dropdown>
                         </div>
@@ -113,7 +117,15 @@
         />
         <VisorProductoCupon
                 :producto-selected="modalCupones.producto"
+                :sucursal-selected="sucursalSelected"
+                :delivery-selected="deliverySelected"
                 :name-modal="modalCupones.nameModal"
+        />
+        <VisorproductoOptionModal
+                :producto-selected="modalOption.producto"
+                :modal-setting="modalOption"
+                :sucursal-selected="sucursalSelected"
+                :delivery-selected="deliverySelected"
         />
     </b-container>
 </template>
@@ -128,10 +140,12 @@
         from "@/components/delivery/ProductoHorario/VisorProductosHorarioModal";
     import VisorProductoSaboresModal from "@/components/delivery/ProductoSabor/VisorProductoSaboresModal";
     import VisorProductoCupon from "@/components/delivery/ProductoCupon/VisorProductoCupon";
+    import VisorproductoOptionModal from "@/components/delivery/ProductoOption/VisorproductoOptionModal";
 
     export default {
         name: "ViewProducto",
         components: {
+            VisorproductoOptionModal,
             VisorProductoCupon,
             VisorProductoSaboresModal,
             EditorCreadorProductoHorarioModal, EditorCreadorProducto, ViewProductoItem},
@@ -171,11 +185,18 @@
                 modalCupones:{
                     producto: ProductoItem.construir(),
                     nameModal: 'modal-product-cupon'
+                },
+                modalOption:{
+                    show:false,
+                    producto: ProductoItem.construir()
                 }
             }
         },
         watch:{
             categoriaSelected(){
+                this.productoModal = ProductoItem.construir()
+                this.modalOption.producto = ProductoItem.construir()
+                this.modalCupones.producto = ProductoItem.construir()
                 this.loadProductos()
             }
         },
@@ -204,6 +225,10 @@
             showModalCupones(producto){
                 this.modalCupones.producto = ProductoItem.FromInput(producto)
                 this.$bvModal.show(this.modalCupones.nameModal)
+            },
+            showModalOptions(producto){
+                this.modalOption.producto = ProductoItem.FromInput(producto)
+                this.modalOption.show = true
             },
             updateProducto(producto){
                 this.productoModal = ProductoItem.FromInput(producto)

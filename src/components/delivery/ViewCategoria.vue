@@ -163,7 +163,10 @@
         watch:{
             // eslint-disable-next-line no-unused-vars
             $route (to, from){
-                this.setParams()
+                if(to.query.categoriaPadreIdSelected || from.query.categoriaPadreIdSelected){
+                    this.setParams()
+                }
+                // console.log(from,to)
             },
             sucursalSelected(){
                 this.setParams()

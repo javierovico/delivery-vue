@@ -16,7 +16,7 @@ export default class ProductoHorarioItem {
     static POR_DIA_MES = 2;
     static DIAS = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado']
 
-    constructor(IdProducto = null, IdHorario = null, dia = 7, horaIni = '18:00:00', horaFin = '23:59:00', fechaIni = ProductoHorarioItem.getDate(), fechaFin = '2099-12-31', dias_mes_venta = 0, activo = 1) {
+    constructor(IdProducto = null, IdHorario = null, dia = 7, horaIni = '00:00:00', horaFin = '23:59:00', fechaIni = ProductoHorarioItem.getDate(), fechaFin = '2099-12-31', dias_mes_venta = 0, activo = 1) {
         this.IdHorario = IdHorario;
         this.IdProducto = IdProducto;
         this.dia = dia;

@@ -1,6 +1,10 @@
 <template>
     <div>
-        <b-modal size="xl" :id="nameModal" ok-only ok-title="Cerrar" :title="'Editar Horarios del Producto '+producto.producto">
+        <b-modal
+                :no-close-on-esc="cargando"
+                :no-close-on-backdrop="cargando"
+                :hide-header-close="cargando"
+                size="xl" :id="nameModal" ok-only ok-title="Cerrar" :title="'Editar Horarios del Producto '+producto.producto">
             <div>
                 <b-container>
                     <b-row>
